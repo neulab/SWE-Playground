@@ -32,13 +32,29 @@ def call_openhands_raw(
                 "Config file path is required. Set OPENHANDS_CONFIG_PATH environment variable "
                 "or pass config_file_path parameter."
             )
+    
+    # Change working directory to the repo of OpenHands
+    print(f"Current working directory: {os.getcwd()}")
+    openhands_dir = os.path.dirname(config_file_path)
+    os.chdir(openhands_dir)
+    print(f"Change working directory to: {os.getcwd()}")
+
+    # Cannot pass working space to OpenHands via arguments
+    # Hence directly modify the config file
+    # Copy config file to and modify workspace_base
+    with open(config_file_path, 'r') as f:
+        config_content = f.read()
+        config_content = config_content.replace('workspace_base = "./workspace"', f'workspace_base = \"{directory}\"')
+    temp_config_file_path = os.path.join(openhands_dir, "config_temp.yaml")
+    with open(temp_config_file_path, 'w') as f:
+        f.write(config_content)
 
     # Build the command
-    cmd = ["python", "-m", "openhands.core.main", "-t", prompt, "--config-file", config_file_path]
+    cmd = ["poetry", "run", "python", "-m", "openhands.core.main", "-t", prompt, "--config-file", temp_config_file_path]
 
-    # Add directory flag if provided
-    if directory is not None:
-        cmd.extend(["-d", directory])
+    # # Add directory flag if provided
+    # if directory is not None:
+    #     cmd.extend(["-d", directory])
 
     # Set default kwargs
     default_kwargs: dict[str, bool] = {"text": True, "capture_output": True, "check": True}
@@ -47,10 +63,16 @@ def call_openhands_raw(
     # Execute the command
     try:
         result = subprocess.run(cmd, text=True, capture_output=True, check=True, **kwargs)
+        # Clean up temporary config file
+        if os.path.exists(temp_config_file_path):
+            os.remove(temp_config_file_path)
         return result
     except subprocess.CalledProcessError as e:
+        # Clean up temporary config file
+        if os.path.exists(temp_config_file_path):
+            os.remove(temp_config_file_path)
         raise subprocess.CalledProcessError(
-            e.returncode, e.cmd, output=e.output, stderr=e.stderr
+            e.returncode, e.cmd, output=e.stdout, stderr=e.stderr
         ) from e
 
 
@@ -71,5 +93,6 @@ def call_openhands(
         ValueError: If no config file path is provided and OPENHANDS_CONFIG_PATH env var is not set.
         subprocess.CalledProcessError: If the OpenHands command fails.
     """
+    print("Repo directory:", directory)
     result = call_openhands_raw(prompt, config_file_path, directory)
     return result.stdout

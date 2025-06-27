@@ -30,7 +30,7 @@ def propose_project(model: str = "neulab/claude-sonnet-4-20250514") -> tuple[str
     user_prompt = prompt_retriever.get_prompt("propose-next-project-user")
 
     response = llm_client.system_completion(
-        system_prompt=system_prompt, user_prompt=user_prompt, temperature=1.0
+        system_prompt=system_prompt, user_prompt=user_prompt, temperature=0.7
     )
 
     project_match = re.search(r"<proposed_project>(.*?)</proposed_project>", response, re.DOTALL)
@@ -62,7 +62,7 @@ def initialize_project_repo(project_description: str, repo_name: str, max_tasks:
     Raises:
         Exception: If initialization fails.
     """
-    current_dir = Path(__file__).parent
+    current_dir = Path(__file__).parent.absolute()
     repo_starter_path = current_dir / "repo_starter"
     generated_dir = current_dir.parent.parent / "generated"
     project_dir = generated_dir / repo_name
