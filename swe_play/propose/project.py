@@ -9,6 +9,7 @@ from pathlib import Path
 from swe_play.utils.call_openhands import call_openhands
 from swe_play.utils.llm_client import create_llm_client
 from swe_play.utils.prompt_retriever import PromptRetriever
+from swe_play.utils.task2json import convert_md_to_json
 
 
 def propose_project(model: str = "neulab/claude-sonnet-4-20250514") -> tuple[str, str]:
@@ -35,8 +36,9 @@ def propose_project(model: str = "neulab/claude-sonnet-4-20250514") -> tuple[str
 
     project_match = re.search(r"<proposed_project>(.*?)</proposed_project>", response, re.DOTALL)
     repo_match = re.search(r"<repo_name>(.*?)</repo_name>", response, re.DOTALL)
+    language_match = re.search(r"<programming_language>(.*?)</programming_language>", response, re.DOTALL)
 
-    if not project_match or not repo_match:
+    if not project_match or not repo_match or not language_match:
         raise Exception(
             f"Invalid response format from LLM. Expected <proposed_project> and <repo_name> tags. "
             f"Got: {response}"
@@ -44,8 +46,9 @@ def propose_project(model: str = "neulab/claude-sonnet-4-20250514") -> tuple[str
 
     project_description = project_match.group(1).strip()
     repo_name = repo_match.group(1).strip()
+    programming_language = language_match.group(1).strip()
 
-    return project_description, repo_name
+    return project_description, repo_name, programming_language
 
 
 def initialize_project_repo(project_description: str, repo_name: str, max_tasks: int = 20) -> str:
@@ -66,7 +69,6 @@ def initialize_project_repo(project_description: str, repo_name: str, max_tasks:
     repo_starter_path = current_dir / "repo_starter"
     generated_dir = current_dir.parent.parent / "generated"
     project_dir = generated_dir / repo_name
-
     generated_dir.mkdir(exist_ok=True)
 
     if project_dir.exists():
@@ -89,12 +91,49 @@ def initialize_project_repo(project_description: str, repo_name: str, max_tasks:
         openhands_output = call_openhands(prompt=initialization_prompt, directory=str(project_dir))
         print(f"OpenHands initialization completed for project: {repo_name}")
         print(f"OpenHands output: {openhands_output}")
+        convert_md_to_json(project_dir / "tasks.md", project_dir / "tasks.json")
     except Exception as e:
         # Clean up the directory if OpenHands fails
         shutil.rmtree(project_dir, ignore_errors=True)
         raise Exception(f"OpenHands initialization failed: {e}")
 
     return str(project_dir)
+
+
+def create_unit_tests(project_description: str, repo_name: str) -> None:
+    """Create unit tests for the project by calling OpenHands in the initialized repo.
+
+    Args:
+        repo_name: The name of the repository to create unit tests for
+
+    Returns:
+        None
+
+    Raises:
+        Exception: If unit tests creation fails.
+    """
+    current_dir = Path(__file__).parent.absolute()
+    generated_dir = current_dir.parent.parent / "generated"
+    project_dir = generated_dir / repo_name
+    unit_tests_dir = project_dir / "tests"
+    if unit_tests_dir.exists():
+        shutil.rmtree(unit_tests_dir)
+    unit_tests_dir.mkdir(parents=True, exist_ok=True)
+
+    prompt_retriever = PromptRetriever()
+    unit_tests_creation_prompt = prompt_retriever.get_prompt(
+        "create-unit-tests-openhands",
+        project_task=project_description,
+    )
+
+    try:
+        openhands_output = call_openhands(prompt=unit_tests_creation_prompt, directory=str(project_dir))
+        print(f"OpenHands unit tests creation completed for project: {repo_name}")
+        print(f"OpenHands output: {openhands_output}")
+    except Exception as e:
+        # Clean up the directory if OpenHands fails
+        shutil.rmtree(project_dir, ignore_errors=True)
+        raise Exception(f"OpenHands initialization failed: {e}")
 
 
 def create_project_pipeline(
@@ -115,18 +154,28 @@ def create_project_pipeline(
     Raises:
         Exception: If any step in the pipeline fails.
     """
-    print("Starting project proposal and initialization pipeline...")
+    print("Starting project proposal and initialization pipeline ...")
+    print("")
 
     # Step 1: Propose project
-    print("Step 1: Proposing project...")
-    project_description, repo_name = propose_project(model=model)
+    print("Step 1: Proposing project ...")
+    project_description, repo_name, programming_language = propose_project(model=model)
     print(f"Proposed project: {project_description}")
     print(f"Repository name: {repo_name}")
+    print(f"Programming language: {programming_language}")
+    print("")
 
     # Step 2: Initialize project repository
-    print("Step 2: Initializing project repository...")
+    print("Step 2: Initializing project repository ...")
     project_path = initialize_project_repo(project_description, repo_name, max_tasks)
     print(f"Project initialized at: {project_path}")
+    print("")
+
+    # Step 3: Create unit tests
+    print("Step 3: Creating unit tests ...")
+    create_unit_tests(project_description, repo_name)
+    print("Unit tests created successfully.")
+    print("")
 
     return {
         "project_description": project_description,

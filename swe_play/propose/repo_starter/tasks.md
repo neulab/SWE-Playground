@@ -1,34 +1,76 @@
 # Project Description
+
 [Description of the project]
 
-# Tasks
+# Task Instruction
 
-## Task 1
-**Title:** [Brief title describing the task]
-**Description:** [Detailed description of what needs to be accomplished in this task]
-**Dependencies:** []
-**Estimated complexity:** [Low/Medium/High]
+[Instruction to finish the task]
 
-## Task 2
-**Title:** [Brief title describing the task]
-**Description:** [Detailed description of what needs to be accomplished in this task]
-**Dependencies:** [1]
-**Estimated complexity:** [Low/Medium/High]
+# Detailed Documentation
 
-## Task 3
-**Title:** [Brief title describing the task]
-**Description:** [Detailed description of what needs to be accomplished in this task]
-**Dependencies:** [1, 2]
-**Estimated complexity:** [Low/Medium/High]
+## Phase 1: [Phase Name]
 
-## Task 4
-**Title:** [Brief title describing the task]
-**Description:** [Detailed description of what needs to be accomplished in this task]
-**Dependencies:** [2]
-**Estimated complexity:** [Low/Medium/High]
+**Goal:** [Description of what this phase accomplishes]
 
-## Task 5
-**Title:** [Brief title describing the task]
-**Description:** [Detailed description of what needs to be accomplished in this task]
-**Dependencies:** [3, 4]
-**Estimated complexity:** [Low/Medium/High] 
+### Module 1.1: [Module Name]
+
+#### Task 1.1.1: [Task Title]
+
+- **Description:** [Detailed description of what needs to be implemented]
+- **Dependencies:** [List prerequisite task numbers, e.g., None, 1.1.1, 1.2.3]
+- **Difficulty:** [Rating from 1/5 to 5/5]
+- **Unit Tests:**
+  - **Code Tests:**
+    - **[TestName]:** [First code test that verifies functionality]
+    - **[TestName]:** [Second code test that verifies functionality]
+  - **Visual Tests:**
+    - **[TestName]:** [First visual test that verifies functionality]
+
+#### Task 1.1.2: [Task Title]
+
+- **Description:** [Detailed description of what needs to be implemented]
+- **Dependencies:** [List prerequisite task numbers]
+- **Difficulty:** [Rating from 1/5 to 5/5]
+- **Unit Tests:**
+  - **Code Tests:**
+    - **[TestName]:** [First code test that verifies functionality]
+
+### Module 1.2: [Module Name]
+
+#### Task 1.2.1: [Task Title]
+
+- **Description:** [Detailed description of what needs to be implemented]
+- **Dependencies:** [List prerequisite task numbers]
+- **Difficulty:** [Rating from 1/5 to 5/5]
+- **Unit Tests:**
+  - **Visual Tests:**
+    - **[TestName]:** [First visual test that verifies functionality]
+
+## Phase 2: [Phase Name]
+
+**Goal:** [Description of what this phase accomplishes]
+
+### Module 2.1: [Module Name]
+
+#### Task 2.1.1: [Task Title]
+
+- **Description:** [Detailed description of what needs to be implemented]
+- **Dependencies:** [List prerequisite task numbers from previous phases]
+- **Difficulty:** [Rating from 1/5 to 5/5]
+- **Unit Tests:**
+  - **Code Tests:** N/A
+
+## Phase 3: [Phase Name]
+
+**Goal:** [Description of what this phase accomplishes]
+
+### Module 3.1: [Module Name]
+
+#### Task 3.1.1: [Task Title]
+
+- **Description:** [Detailed description of what needs to be implemented]
+- **Dependencies:** [List prerequisite task numbers from previous phases]
+- **Difficulty:** [Rating from 1/5 to 5/5]
+- **Unit Tests:**
+  - **Code Tests:**
+    - **[TestName]:** [First code test that verifies functionality]

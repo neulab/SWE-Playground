@@ -4,9 +4,9 @@
 
 ### Repository Setup
 
-1. **Activate your python environment:**
-    E.g., with conda:
+1. **Create and activate your Python environment:**
     ```bash
+    conda create -n swe-play python==3.12
     conda activate swe-play
     ```
 
@@ -31,7 +31,7 @@
 Automated AI pipeline for generating and setting up new software engineering projects.
 
 ```bash
-python -m swe_play.propose.project --max-tasks 20
+python -m swe_play.propose.project --max-tasks 20 --model claude-sonnet-4-20250514
 ```
 
 📖 **[Detailed Pipeline Documentation](swe_play/propose/README.md)**

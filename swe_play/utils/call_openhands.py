@@ -45,7 +45,7 @@ def call_openhands_raw(
     with open(config_file_path, 'r') as f:
         config_content = f.read()
         config_content = config_content.replace('workspace_base = "./workspace"', f'workspace_base = \"{directory}\"')
-    temp_config_file_path = os.path.join(openhands_dir, "config_temp.yaml")
+    temp_config_file_path = os.path.join(openhands_dir, "config_temp.toml")
     with open(temp_config_file_path, 'w') as f:
         f.write(config_content)
 
