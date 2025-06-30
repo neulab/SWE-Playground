@@ -43,7 +43,7 @@ project, repo, language = propose_project(model="claude-3-sonnet")
 
 1. **Propose**: LLM generates project idea and repo name
 2. **Initialize**: Copies template and generates tasks with OpenHands
-3. **Generate Unit Tests**: Generate unit tests with OpenHands
+3. **Generate Unit Tests**: Generate unit tests task by task with OpenHands
 
 **Output Structure:**
 ```

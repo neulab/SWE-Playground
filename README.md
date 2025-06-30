@@ -17,7 +17,7 @@
 
 3. **OpenHands Headless Setup**
 
-    This repository leverages OpenHands in headless mode via python. To set up OpenHands for this, follow the [OpenHands Development setup instructions](https://docs.all-hands.dev/usage/how-to/headless-mode#with-python)
+    This repository leverages OpenHands in headless mode via python. To set up OpenHands for this, follow the [OpenHands Development setup instructions](https://docs.all-hands.dev/usage/how-to/headless-mode#with-python).
 
 4. **Set Env variables**
     ```bash
