@@ -4,6 +4,7 @@ import argparse
 import re
 import shutil
 import sys
+import json
 from pathlib import Path
 
 from swe_play.utils.call_openhands import call_openhands
@@ -119,22 +120,69 @@ def create_unit_tests(project_description: str, repo_name: str) -> None:
     if unit_tests_dir.exists():
         shutil.rmtree(unit_tests_dir)
     unit_tests_dir.mkdir(parents=True, exist_ok=True)
+    
+    # Load task.json and extract all unit tests grouped by Task X.Y.Z
+    task = json.load(open(project_dir / "tasks.json"))
+    unit_tests_by_task = {}  # Dictionary to group tests by task number
 
-    prompt_retriever = PromptRetriever()
-    unit_tests_creation_prompt = prompt_retriever.get_prompt(
-        "create-unit-tests-openhands",
-        project_task=project_description,
-    )
+    for phase in task.get("phases", []):
+        for module in phase.get("modules", []):
+            for task_item in module.get("tasks", []):
+                task_number = task_item.get("task_number")
+                unit_tests = task_item.get("unit_tests", {})
+                code_tests = unit_tests.get("code_tests", [])
+                visual_tests = unit_tests.get("visual_tests", [])
+            
+                # Only process tasks that have actual tests
+                if code_tests or visual_tests:
+                    # Combine all tests for this task X.Y.Z
+                    all_tests_for_task = []
+                    for test in code_tests:
+                        all_tests_for_task.append({
+                            "type": "code",
+                            "name": test.get("name"),
+                            "description": test.get("description")
+                        })  
+                    for test in visual_tests:
+                        all_tests_for_task.append({
+                            "type": "visual",
+                            "name": test.get("name"),
+                            "description": test.get("description")
+                        })
+                    
+                    unit_tests_by_task[task_number] = {
+                        "task_number": task_number,
+                        "task_title": task_item.get("title"),
+                        "task_description": task_item.get("description"),
+                        "phase_number": phase.get("phase_number"),
+                        "module_number": module.get("module_number"),
+                        "all_tests": all_tests_for_task,
+                        "total_tests": len(all_tests_for_task)
+                    }
+    
+    for task_number, task_data in unit_tests_by_task.items():
+        # Format the unit test prompt for the task
+        print(f"Creating unit tests for task {task_number}...")
+        test_prompt = f"Task {task_number}: {task_data['total_tests']} total tests\n"
+        for test in task_data['all_tests']:
+            test_prompt += f"  - {test['type']}: {test['name']}\n"
 
-    try:
-        openhands_output = call_openhands(prompt=unit_tests_creation_prompt, directory=str(project_dir))
-        print(f"OpenHands unit tests creation completed for project: {repo_name}")
-        print(f"OpenHands output: {openhands_output}")
-    except Exception as e:
-        # Clean up the directory if OpenHands fails
-        shutil.rmtree(project_dir, ignore_errors=True)
-        raise Exception(f"OpenHands initialization failed: {e}")
+        prompt_retriever = PromptRetriever()
+        unit_tests_creation_prompt = prompt_retriever.get_prompt(
+            "create-unit-tests-openhands",
+            project_task=project_description,
+            unit_test_prompt=test_prompt,
+        )
 
+        try:
+            openhands_output = call_openhands(prompt=unit_tests_creation_prompt, directory=str(project_dir))
+            print(f"OpenHands unit tests creation completed for project: {repo_name}")
+            print(f"OpenHands output: {openhands_output}")
+        except Exception as e:
+            # Clean up the directory if OpenHands fails
+            shutil.rmtree(project_dir, ignore_errors=True)
+            raise Exception(f"OpenHands unit tests creation failed: {e}")
+    
 
 def create_project_pipeline(
     max_tasks: int = 20, model: str = "neulab/claude-sonnet-4-20250514"
@@ -154,11 +202,11 @@ def create_project_pipeline(
     Raises:
         Exception: If any step in the pipeline fails.
     """
-    print("Starting project proposal and initialization pipeline ...")
+    print("Starting project proposal and initialization pipeline...")
     print("")
 
     # Step 1: Propose project
-    print("Step 1: Proposing project ...")
+    print("Step 1: Proposing project...")
     project_description, repo_name, programming_language = propose_project(model=model)
     print(f"Proposed project: {project_description}")
     print(f"Repository name: {repo_name}")
@@ -166,13 +214,13 @@ def create_project_pipeline(
     print("")
 
     # Step 2: Initialize project repository
-    print("Step 2: Initializing project repository ...")
+    print("Step 2: Initializing project repository...")
     project_path = initialize_project_repo(project_description, repo_name, max_tasks)
     print(f"Project initialized at: {project_path}")
     print("")
 
     # Step 3: Create unit tests
-    print("Step 3: Creating unit tests ...")
+    print("Step 3: Creating unit tests...")
     create_unit_tests(project_description, repo_name)
     print("Unit tests created successfully.")
     print("")

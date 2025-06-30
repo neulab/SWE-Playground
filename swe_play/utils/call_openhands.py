@@ -34,10 +34,9 @@ def call_openhands_raw(
             )
     
     # Change working directory to the repo of OpenHands
-    print(f"Current working directory: {os.getcwd()}")
+    current_cwd = os.getcwd()
     openhands_dir = os.path.dirname(config_file_path)
     os.chdir(openhands_dir)
-    print(f"Change working directory to: {os.getcwd()}")
 
     # Cannot pass working space to OpenHands via arguments
     # Hence directly modify the config file
@@ -74,6 +73,9 @@ def call_openhands_raw(
         raise subprocess.CalledProcessError(
             e.returncode, e.cmd, output=e.stdout, stderr=e.stderr
         ) from e
+    finally:
+        # Always restore original working directory
+        os.chdir(current_cwd)
 
 
 def call_openhands(
