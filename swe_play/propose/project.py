@@ -127,6 +127,9 @@ def generate_unit_tests(project_description: str, repo_name: str) -> None:
     task = json.load(open(project_dir / "tasks.json"))
     unit_tests_by_task = {}  # Dictionary to group tests by task number
 
+    # Directly generate unit tests for the whole project frequently fails
+    # Here we generate unit tests task by task
+    # First group all unit tests by task number
     for phase in task.get("phases", []):
         for module in phase.get("modules", []):
             for task_item in module.get("tasks", []):
@@ -166,6 +169,7 @@ def generate_unit_tests(project_description: str, repo_name: str) -> None:
                         "total_tests": len(all_tests_for_task),
                     }
 
+    # Then iterate over each task to generate unit tests
     for task_number, task_data in unit_tests_by_task.items():
         # Format the unit test prompt for the task
         print(f"Creating unit tests for task {task_number}...")
