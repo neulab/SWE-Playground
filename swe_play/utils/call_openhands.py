@@ -51,8 +51,17 @@ def call_openhands_raw(
         f.write(config_content)
 
     # Build the command
-    cmd = ["poetry", "run", "python", "-m", "openhands.core.main", "-t",
-           prompt, "--config-file", temp_config_file_path]
+    cmd = [
+        "poetry",
+        "run",
+        "python",
+        "-m",
+        "openhands.core.main",
+        "-t",
+        prompt,
+        "--config-file",
+        temp_config_file_path,
+    ]
 
     # # Add directory flag if provided
     # if directory is not None:
