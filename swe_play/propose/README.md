@@ -1,6 +1,6 @@
-# Project Proposal and Initialization Pipeline
+# Project Proposal, Initialization and Unit Test Generation Pipeline
 
-Automated pipeline that uses AI to propose project ideas, set up repository structures with tasks and create unit tests.
+Automated pipeline that uses AI to propose project ideas, set up repository structures with tasks and generate unit tests.
 
 ## Setup
 
@@ -43,7 +43,7 @@ project, repo, language = propose_project(model="claude-3-sonnet")
 
 1. **Propose**: LLM generates project idea and repo name
 2. **Initialize**: Copies template and generates tasks with OpenHands
-3. **Create Unit Tests**: Generate unit tests based on the generated tasks with OpenHands
+3. **Generate Unit Tests**: Generate unit tests with OpenHands
 
 **Output Structure:**
 ```
