@@ -4,9 +4,9 @@ import argparse
 import json
 import re
 import shutil
+import subprocess
 import sys
 import time
-import subprocess
 from pathlib import Path
 
 from swe_play.utils.call_openhands import call_openhands
@@ -56,7 +56,9 @@ def propose_project(model: str = "neulab/claude-sonnet-4-20250514") -> tuple[str
     return project_description, repo_name, programming_language
 
 
-def initialize_project_repo(project_description: str, repo_name: str, programming_language: str, max_tasks: int = 20) -> str:
+def initialize_project_repo(
+    project_description: str, repo_name: str, programming_language: str, max_tasks: int = 20
+) -> str:
     """Initialize a project repository by copying the starter template and calling OpenHands.
 
     Args:
@@ -206,7 +208,7 @@ def generate_unit_tests(project_description: str, repo_name: str) -> None:
             # Clean up the directory if OpenHands fails
             shutil.rmtree(project_dir, ignore_errors=True)
             raise Exception(f"OpenHands unit tests creation failed: {e}")
-        
+
 
 def create_docker_image(repo_name: str) -> None:
     """Create a Docker image for the project.
@@ -226,19 +228,13 @@ def create_docker_image(repo_name: str) -> None:
     dockerfile_path = project_dir / "Dockerfile"
     if not dockerfile_path.exists():
         raise Exception(f"Dockerfile not found in {dockerfile_path}")
-    
-    def attempt_docker_build():
+
+    def attempt_docker_build() -> tuple[bool, str, str]:
         """Attempt to build the docker image and return result and output."""
         image_tag = f"swe-play/{repo_name.lower()}:{str(int(time.time()))}"
         try:
             result = subprocess.run(
-                [
-                    "docker",
-                    "build",
-                    "-t",
-                    image_tag,
-                    "."
-                ],
+                ["docker", "build", "-t", image_tag, "."],
                 cwd=str(project_dir),
                 check=True,
                 capture_output=True,
@@ -256,7 +252,9 @@ def create_docker_image(repo_name: str) -> None:
             break
         iter_cnt += 1
         if iter_cnt >= 5:
-            raise Exception(f"Failed to build Docker image for {repo_name} after {iter_cnt} attempts.")
+            raise Exception(
+                f"Failed to build Docker image for {repo_name} after {iter_cnt} attempts."
+            )
 
         error_msgs = f"stdout:\n{stdout[-1000:]}\nstderr:\n{stderr[-1000:]}"
         prompt_retriever = PromptRetriever()
@@ -265,7 +263,9 @@ def create_docker_image(repo_name: str) -> None:
             error_msgs=error_msgs,
         )
         try:
-            openhands_output = call_openhands(prompt=initialization_prompt, directory=str(project_dir))
+            openhands_output = call_openhands(
+                prompt=initialization_prompt, directory=str(project_dir)
+            )
             print(f"OpenHands Dockerfile fix trial {iter_cnt} completed")
             print(f"OpenHands output: {openhands_output}")
         except Exception as e:
@@ -304,7 +304,9 @@ def create_project_pipeline(
 
     # Step 2: Initialize project repository
     print("Step 2: Initializing project repository...")
-    project_path = initialize_project_repo(project_description, repo_name, programming_language, max_tasks)
+    project_path = initialize_project_repo(
+        project_description, repo_name, programming_language, max_tasks
+    )
     print(f"Project initialized at: {project_path}")
     print("")
 

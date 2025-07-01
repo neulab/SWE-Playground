@@ -1,10 +1,10 @@
 """LLM client utility for making calls to LLMs compatible with the OpenAI's API."""
 
 import os
-from typing import Any
+from typing import Any, cast
 
 from openai import OpenAI
-from openai.types.chat import ChatCompletion
+from openai.types.chat import ChatCompletion, ChatCompletionMessageParam
 
 
 class LLMClient:
@@ -43,7 +43,7 @@ class LLMClient:
 
     def chat_completion(
         self,
-        messages: list[dict[str, str]],
+        messages: list[ChatCompletionMessageParam],
         temperature: float = 0.7,
         max_tokens: int | None = None,
         **kwargs: Any,
@@ -93,7 +93,7 @@ class LLMClient:
         Returns:
             The generated text response.
         """
-        messages = [{"role": "user", "content": prompt}]
+        messages = cast(list[ChatCompletionMessageParam], [{"role": "user", "content": prompt}])
         return self.chat_completion(messages, temperature, max_tokens, **kwargs)
 
     def system_completion(
@@ -116,10 +116,13 @@ class LLMClient:
         Returns:
             The generated text response.
         """
-        messages = [
-            {"role": "system", "content": system_prompt},
-            {"role": "user", "content": user_prompt},
-        ]
+        messages = cast(
+            list[ChatCompletionMessageParam],
+            [
+                {"role": "system", "content": system_prompt},
+                {"role": "user", "content": user_prompt},
+            ],
+        )
         return self.chat_completion(messages, temperature, max_tokens, **kwargs)
 
 
