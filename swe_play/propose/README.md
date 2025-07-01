@@ -1,6 +1,6 @@
 # Project Proposal, Initialization and Unit Test Generation Pipeline
 
-Automated pipeline that uses AI to propose project ideas, set up repository structures with tasks and generate unit tests.
+Automated pipeline that uses AI to propose project ideas, set up repository structures with tasks, and generate unit tests. The pipeline also configures all Docker-related files and builds a Docker image for the project.
 
 ## Setup
 
@@ -21,7 +21,7 @@ Activate conda environment: `conda activate swe-play`
 python -m swe_play.propose.project
 
 # Both options
-python -m swe_play.propose.project --max-tasks 5 --model gpt-3.5-turbo
+python -m swe_play.propose.project --max-tasks 20 --model claude-sonnet-4-20250514
 ```
 
 ### Python API
@@ -29,14 +29,14 @@ python -m swe_play.propose.project --max-tasks 5 --model gpt-3.5-turbo
 from swe_play.propose.project import create_project_pipeline, propose_project
 
 # Full pipeline with default model
-result = create_project_pipeline(max_tasks=5)
+result = create_project_pipeline(max_tasks=20)
 print(f"Created: {result['repo_name']} at {result['project_path']}")
 
 # Custom model
-result = create_project_pipeline(max_tasks=5, model="gpt-4")
+result = create_project_pipeline(max_tasks=20, model="claude-sonnet-4-20250514")
 
 # Just propose with custom model
-project, repo, language = propose_project(model="claude-3-sonnet")
+project, repo, language = propose_project(model="claude-sonnet-4-20250514")
 ```
 
 ## How It Works
@@ -51,6 +51,7 @@ generated/
 └── [repo-name]/
     ├── tasks.md          # Generated tasks in Markdown format
     ├── tasks.json        # Generated tasks in JSON format
+    ├── Dockerfile        # Dockerfile for Docker image creation
     ├── tests/            # Unit tests
     ├── src/              # Source code structure
     ├── assets/           # Assets for the project

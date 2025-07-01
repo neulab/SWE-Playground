@@ -5,6 +5,8 @@ import json
 import re
 import shutil
 import sys
+import time
+import subprocess
 from pathlib import Path
 
 from swe_play.utils.call_openhands import call_openhands
@@ -54,7 +56,7 @@ def propose_project(model: str = "neulab/claude-sonnet-4-20250514") -> tuple[str
     return project_description, repo_name, programming_language
 
 
-def initialize_project_repo(project_description: str, repo_name: str, max_tasks: int = 20) -> str:
+def initialize_project_repo(project_description: str, repo_name: str, programming_language: str, max_tasks: int = 20) -> str:
     """Initialize a project repository by copying the starter template and calling OpenHands.
 
     Args:
@@ -68,8 +70,18 @@ def initialize_project_repo(project_description: str, repo_name: str, max_tasks:
     Raises:
         Exception: If initialization fails.
     """
+    # Get the repo starter path based on the programming language
     current_dir = Path(__file__).parent.absolute()
-    repo_starter_path = current_dir / "repo_starter"
+    if programming_language.lower() == "python":
+        repo_starter_path = current_dir / "repo_starter" / "python"
+    elif programming_language.lower() == "c++":
+        repo_starter_path = current_dir / "repo_starter" / "c++"
+    elif programming_language.lower() == "rust":
+        repo_starter_path = current_dir / "repo_starter" / "rust"
+    elif programming_language.lower() == "javascript":
+        repo_starter_path = current_dir / "repo_starter" / "javascript"
+    else:
+        raise Exception(f"Unsupported programming language: {programming_language}")
     generated_dir = current_dir.parent.parent / "generated"
     project_dir = generated_dir / repo_name
     generated_dir.mkdir(exist_ok=True)
@@ -179,7 +191,7 @@ def generate_unit_tests(project_description: str, repo_name: str) -> None:
 
         prompt_retriever = PromptRetriever()
         unit_tests_creation_prompt = prompt_retriever.get_prompt(
-            "create-unit-tests-openhands",
+            "generate-unit-tests-openhands",
             project_task=project_description,
             unit_test_prompt=test_prompt,
         )
@@ -194,6 +206,70 @@ def generate_unit_tests(project_description: str, repo_name: str) -> None:
             # Clean up the directory if OpenHands fails
             shutil.rmtree(project_dir, ignore_errors=True)
             raise Exception(f"OpenHands unit tests creation failed: {e}")
+        
+
+def create_docker_image(repo_name: str) -> None:
+    """Create a Docker image for the project.
+
+    Args:
+        repo_name: The name of the repository to create Docker image for
+
+    Returns:
+        None
+
+    Raises:
+        Exception: If Docker image creation fails even after five times OpenHands fix attempt.
+    """
+    current_dir = Path(__file__).parent.absolute()
+    generated_dir = current_dir.parent.parent / "generated"
+    project_dir = generated_dir / repo_name
+    dockerfile_path = project_dir / "Dockerfile"
+    if not dockerfile_path.exists():
+        raise Exception(f"Dockerfile not found in {dockerfile_path}")
+    
+    def attempt_docker_build():
+        """Attempt to build the docker image and return result and output."""
+        image_tag = f"swe-play/{repo_name.lower()}:{str(int(time.time()))}"
+        try:
+            result = subprocess.run(
+                [
+                    "docker",
+                    "build",
+                    "-t",
+                    image_tag,
+                    "."
+                ],
+                cwd=str(project_dir),
+                check=True,
+                capture_output=True,
+                text=True,
+            )
+            return True, result.stdout, result.stderr
+        except subprocess.CalledProcessError as e:
+            return False, e.stdout if e.stdout else "", e.stderr if e.stderr else ""
+
+    iter_cnt = 0
+    while True:
+        success, stdout, stderr = attempt_docker_build()
+        if success:
+            print(f"Docker image built successfully for {repo_name} after {iter_cnt+1} attempts.")
+            break
+        iter_cnt += 1
+        if iter_cnt >= 5:
+            raise Exception(f"Failed to build Docker image for {repo_name} after {iter_cnt} attempts.")
+
+        error_msgs = f"stdout:\n{stdout[-1000:]}\nstderr:\n{stderr[-1000:]}"
+        prompt_retriever = PromptRetriever()
+        initialization_prompt = prompt_retriever.get_prompt(
+            "fix-dockerfile-openhands",
+            error_msgs=error_msgs,
+        )
+        try:
+            openhands_output = call_openhands(prompt=initialization_prompt, directory=str(project_dir))
+            print(f"OpenHands Dockerfile fix trial {iter_cnt} completed")
+            print(f"OpenHands output: {openhands_output}")
+        except Exception as e:
+            raise Exception(f"OpenHands Dockerfile fix failed: {e}")
 
 
 def create_project_pipeline(
@@ -228,8 +304,14 @@ def create_project_pipeline(
 
     # Step 2: Initialize project repository
     print("Step 2: Initializing project repository...")
-    project_path = initialize_project_repo(project_description, repo_name, max_tasks)
+    project_path = initialize_project_repo(project_description, repo_name, programming_language, max_tasks)
     print(f"Project initialized at: {project_path}")
+    print("")
+
+    # Step 2.5 Create Docker image for the project
+    print("Step 2.5: Creating Docker image for the project...")
+    create_docker_image(repo_name)
+    print("Docker image created successfully.")
     print("")
 
     # Step 3: Create unit tests

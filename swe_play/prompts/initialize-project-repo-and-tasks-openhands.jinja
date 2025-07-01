@@ -69,3 +69,12 @@ Create the initial project structure with the following components:
 The repository should be immediately buildable and runnable with basic "Hello World" functionality to verify the setup is correct. However you should not implement any functions involved in tasks, which means your implemented setup should not pass any unit test.
 
 Also, unit tests should not be setup in this stage.
+
+4. Prepare Docker setup for the project.
+
+- Modify `Dockerfile` and any other necessary files (such as `.dockerignore`) to enable containerized development of the project.
+- Ensure the Docker setup installs all required build tools and dependencies for the project to compile and run, and most importantly for further development.
+- The Docker container must be persistent for further development. Do not modify `CMD ["tail", "-f", "/dev/null"]` is Dockerfile.
+- For Python setup, you should create a new conda environment instead of directly installing all the packages. Therefore, use miniconda and environment.yml for setting up.
+
+A template Dockerfile tailored to the project's programming language has been provided in the repository. Please review and update this Dockerfile as needed to ensure it fully supports the specific requirements and dependencies of your project.
