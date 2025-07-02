@@ -118,9 +118,7 @@ def propose_tasks(
     return str(project_dir)
 
 
-def setup_project_repo(
-    project_description: str, repo_name: str
-) -> str:
+def setup_project_repo(project_description: str, repo_name: str) -> str:
     """Setup a project repository by calling OpenHands.
 
     Args:
@@ -341,10 +339,8 @@ def create_project_pipeline(
 
     # Step 2: Propose tasks
     print("Step 2: Proposing tasks...")
-    project_path = propose_tasks(
-        project_description, repo_name, programming_language, max_tasks
-    )
-    print(f"Tasks proposed successfully.")
+    project_path = propose_tasks(project_description, repo_name, programming_language, max_tasks)
+    print("Tasks proposed successfully.")
     print("")
 
     # Step 3: Initialize project repository

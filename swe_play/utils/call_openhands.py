@@ -1,8 +1,8 @@
 """Utility for calling OpenHands agent."""
 
 import os
-import subprocess
 import re
+import subprocess
 from typing import Any
 
 
@@ -45,9 +45,7 @@ def call_openhands_raw(
         config_content = f.read()
         # Use regex to find and replace workspace_base regardless of the original value
         config_content = re.sub(
-            r'workspace_base\s*=\s*"[^"]*"',
-            f'workspace_base = "{directory}"',
-            config_content
+            r'workspace_base\s*=\s*"[^"]*"', f'workspace_base = "{directory}"', config_content
         )
     with open(config_file_path, "w") as f:
         f.write(config_content)
