@@ -56,21 +56,22 @@ def propose_project(model: str = "neulab/claude-sonnet-4-20250514") -> tuple[str
     return project_description, repo_name, programming_language
 
 
-def initialize_project_repo(
+def propose_tasks(
     project_description: str, repo_name: str, programming_language: str, max_tasks: int = 20
 ) -> str:
-    """Initialize a project repository by copying the starter template and calling OpenHands.
+    """Propose tasks for the project by calling OpenHands.
 
     Args:
         project_description: Description of the project to work on
         repo_name: Name for the repository directory
+        programming_language: Programming language to use for the project
         max_tasks: Maximum number of tasks to generate (default: 20)
 
     Returns:
         Path to the created project directory
 
     Raises:
-        Exception: If initialization fails.
+        Exception: If task proposal fails.
     """
     # Get the repo starter path based on the programming language
     current_dir = Path(__file__).parent.absolute()
@@ -98,21 +99,57 @@ def initialize_project_repo(
         raise Exception(f"Failed to copy repo_starter template: {e}")
 
     prompt_retriever = PromptRetriever()
-    initialization_prompt = prompt_retriever.get_prompt(
-        "initialize-project-repo-and-tasks-openhands",
+    task_proposal_prompt = prompt_retriever.get_prompt(
+        "propose-tasks-openhands",
         project_task=project_description,
         max_tasks=max_tasks,
     )
 
     try:
-        openhands_output = call_openhands(prompt=initialization_prompt, directory=str(project_dir))
-        print(f"OpenHands initialization completed for project: {repo_name}")
+        openhands_output = call_openhands(prompt=task_proposal_prompt, directory=str(project_dir))
+        print(f"OpenHands task proposal completed for project: {repo_name}")
         print(f"OpenHands output: {openhands_output}")
         convert_md_to_json(str(project_dir / "tasks.md"), str(project_dir / "tasks.json"))
     except Exception as e:
         # Clean up the directory if OpenHands fails
         shutil.rmtree(project_dir, ignore_errors=True)
-        raise Exception(f"OpenHands initialization failed: {e}")
+        raise Exception(f"OpenHands task proposal failed: {e}")
+
+    return str(project_dir)
+
+
+def setup_project_repo(
+    project_description: str, repo_name: str
+) -> str:
+    """Setup a project repository by calling OpenHands.
+
+    Args:
+        project_description: Description of the project to work on
+
+    Returns:
+        Path to the created project directory
+
+    Raises:
+        Exception: If initialization fails.
+    """
+    current_dir = Path(__file__).parent.absolute()
+    generated_dir = current_dir.parent.parent / "generated"
+    project_dir = generated_dir / repo_name
+
+    prompt_retriever = PromptRetriever()
+    setup_prompt = prompt_retriever.get_prompt(
+        "setup-project-repo-openhands",
+        project_task=project_description,
+    )
+
+    try:
+        openhands_output = call_openhands(prompt=setup_prompt, directory=str(project_dir))
+        print(f"OpenHands setup completed for project: {repo_name}")
+        print(f"OpenHands output: {openhands_output}")
+    except Exception as e:
+        # Clean up the directory if OpenHands fails
+        shutil.rmtree(project_dir, ignore_errors=True)
+        raise Exception(f"OpenHands setup failed: {e}")
 
     return str(project_dir)
 
@@ -302,22 +339,28 @@ def create_project_pipeline(
     print(f"Programming language: {programming_language}")
     print("")
 
-    # Step 2: Initialize project repository
-    print("Step 2: Initializing project repository...")
-    project_path = initialize_project_repo(
+    # Step 2: Propose tasks
+    print("Step 2: Proposing tasks...")
+    project_path = propose_tasks(
         project_description, repo_name, programming_language, max_tasks
     )
+    print(f"Tasks proposed successfully.")
+    print("")
+
+    # Step 3: Initialize project repository
+    print("Step 3: Initializing project repository...")
+    project_path = setup_project_repo(project_description, repo_name)
     print(f"Project initialized at: {project_path}")
     print("")
 
-    # Step 2.5 Create Docker image for the project
-    print("Step 2.5: Creating Docker image for the project...")
+    # Step 3.5 Create Docker image for the project
+    print("Step 3.5: Creating Docker image for the project...")
     create_docker_image(repo_name)
     print("Docker image created successfully.")
     print("")
 
-    # Step 3: Create unit tests
-    print("Step 3: Generating unit tests...")
+    # Step 4: Create unit tests
+    print("Step 4: Generating unit tests...")
     generate_unit_tests(project_description, repo_name)
     print("Unit tests generated successfully.")
     print("")

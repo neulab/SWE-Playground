@@ -193,7 +193,7 @@ cython_debug/
 .cursorignore
 .cursorindexingignore
 
-# SWE-Playground specific
+# SWE-Playground Outputs
 generated/
 
 # Local Scripts

@@ -2,6 +2,7 @@
 
 import os
 import subprocess
+import re
 from typing import Any
 
 
@@ -39,15 +40,16 @@ def call_openhands_raw(
     os.chdir(openhands_dir)
 
     # Cannot pass working space to OpenHands via arguments
-    # Hence directly modify the config file
-    # Copy config file to and modify workspace_base
+    # Hence directly modify the config file to set workspace_base
     with open(config_file_path, "r") as f:
         config_content = f.read()
-        config_content = config_content.replace(
-            'workspace_base = "./workspace"', f'workspace_base = "{directory}"'
+        # Use regex to find and replace workspace_base regardless of the original value
+        config_content = re.sub(
+            r'workspace_base\s*=\s*"[^"]*"',
+            f'workspace_base = "{directory}"',
+            config_content
         )
-    temp_config_file_path = os.path.join(openhands_dir, "config_temp.toml")
-    with open(temp_config_file_path, "w") as f:
+    with open(config_file_path, "w") as f:
         f.write(config_content)
 
     # Build the command
@@ -60,7 +62,7 @@ def call_openhands_raw(
         "-t",
         prompt,
         "--config-file",
-        temp_config_file_path,
+        config_file_path,
     ]
 
     # # Add directory flag if provided
@@ -74,14 +76,8 @@ def call_openhands_raw(
     # Execute the command
     try:
         result = subprocess.run(cmd, text=True, capture_output=True, check=True, **kwargs)
-        # Clean up temporary config file
-        if os.path.exists(temp_config_file_path):
-            os.remove(temp_config_file_path)
         return result
     except subprocess.CalledProcessError as e:
-        # Clean up temporary config file
-        if os.path.exists(temp_config_file_path):
-            os.remove(temp_config_file_path)
         raise subprocess.CalledProcessError(
             e.returncode, e.cmd, output=e.stdout, stderr=e.stderr
         ) from e

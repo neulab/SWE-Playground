@@ -1,6 +1,6 @@
 # Project Proposal, Initialization and Unit Test Generation Pipeline
 
-Automated pipeline that uses AI to propose project ideas, set up repository structures with tasks, and generate unit tests. The pipeline also configures all Docker-related files and builds a Docker image for the project.
+Automated pipeline that uses AI to propose project ideas and step by step tasks, set up repository structures, and generate unit tests. The pipeline also configures all Docker-related files and builds a Docker image for the project.
 
 ## Setup
 
@@ -41,8 +41,8 @@ project, repo, language = propose_project(model="claude-sonnet-4-20250514")
 
 ## How It Works
 
-1. **Propose**: LLM generates project idea and repo name
-2. **Initialize**: Copies template and generates tasks with OpenHands
+1. **Propose**: LLM generates project idea, repo name and tasks
+2. **Initialize**: Copies template and setup repository sturctures with OpenHands
 3. **Generate Unit Tests**: Generate unit tests task by task with OpenHands
 
 **Output Structure:**
