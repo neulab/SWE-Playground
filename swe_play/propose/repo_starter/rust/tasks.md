@@ -2,9 +2,9 @@
 
 [Description of the project]
 
-# Task Instruction
+# Project Instruction
 
-[Instruction to finish the task]
+[Instruction to finish the project]
 
 # Detailed Documentation
 

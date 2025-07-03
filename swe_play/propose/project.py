@@ -57,7 +57,7 @@ def propose_project(model: str = "neulab/claude-sonnet-4-20250514") -> tuple[str
 
 
 def propose_tasks(
-    project_description: str, repo_name: str, programming_language: str, max_tasks: int = 20
+    project_description: str, repo_name: str, programming_language: str, project_id: str, max_tasks: int = 20
 ) -> str:
     """Propose tasks for the project by calling OpenHands.
 
@@ -65,6 +65,7 @@ def propose_tasks(
         project_description: Description of the project to work on
         repo_name: Name for the repository directory
         programming_language: Programming language to use for the project
+        project_id: Project ID to use for the project
         max_tasks: Maximum number of tasks to generate (default: 20)
 
     Returns:
@@ -109,7 +110,7 @@ def propose_tasks(
         openhands_output = call_openhands(prompt=task_proposal_prompt, directory=str(project_dir))
         print(f"OpenHands task proposal completed for project: {repo_name}")
         print(f"OpenHands output: {openhands_output}")
-        convert_md_to_json(str(project_dir / "tasks.md"), str(project_dir / "tasks.json"))
+        convert_md_to_json(str(project_dir / "tasks.md"), str(project_dir / "tasks.json"), project_name=repo_name, project_id=project_id)
     except Exception as e:
         # Clean up the directory if OpenHands fails
         shutil.rmtree(project_dir, ignore_errors=True)
@@ -245,7 +246,7 @@ def generate_unit_tests(project_description: str, repo_name: str) -> None:
             raise Exception(f"OpenHands unit tests creation failed: {e}")
 
 
-def create_docker_image(repo_name: str) -> None:
+def create_docker_image(repo_name: str, project_id: str) -> None:
     """Create a Docker image for the project.
 
     Args:
@@ -266,7 +267,7 @@ def create_docker_image(repo_name: str) -> None:
 
     def attempt_docker_build() -> tuple[bool, str, str]:
         """Attempt to build the docker image and return result and output."""
-        image_tag = f"swe-play/{repo_name.lower()}:{str(int(time.time()))}"
+        image_tag = f"swe-play/{repo_name.lower()}:{project_id}"
         try:
             result = subprocess.run(
                 ["docker", "build", "-t", image_tag, "."],
@@ -291,6 +292,7 @@ def create_docker_image(repo_name: str) -> None:
                 f"Failed to build Docker image for {repo_name} after {iter_cnt} attempts."
             )
 
+        # Only last 1000 characters of stdout and stderr for fixing
         error_msgs = f"stdout:\n{stdout[-1000:]}\nstderr:\n{stderr[-1000:]}"
         prompt_retriever = PromptRetriever()
         initialization_prompt = prompt_retriever.get_prompt(
@@ -326,6 +328,7 @@ def create_project_pipeline(
     Raises:
         Exception: If any step in the pipeline fails.
     """
+    project_id = str(int(time.time()))
     print("Starting project proposal and initialization pipeline...")
     print("")
 
@@ -339,7 +342,7 @@ def create_project_pipeline(
 
     # Step 2: Propose tasks
     print("Step 2: Proposing tasks...")
-    project_path = propose_tasks(project_description, repo_name, programming_language, max_tasks)
+    project_path = propose_tasks(project_description, repo_name, programming_language, project_id, max_tasks)
     print("Tasks proposed successfully.")
     print("")
 
@@ -351,7 +354,7 @@ def create_project_pipeline(
 
     # Step 3.5 Create Docker image for the project
     print("Step 3.5: Creating Docker image for the project...")
-    create_docker_image(repo_name)
+    create_docker_image(repo_name, project_id)
     print("Docker image created successfully.")
     print("")
 

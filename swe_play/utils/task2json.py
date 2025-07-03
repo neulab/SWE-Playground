@@ -5,7 +5,9 @@ Script to extract tasks.md markdown file into structured JSON format.
 
 import argparse
 import json
+import random
 import re
+import string
 from pathlib import Path
 from typing import Any, Dict, List, Optional
 
@@ -13,8 +15,10 @@ from typing import Any, Dict, List, Optional
 class TasksMarkdownParser:
     def __init__(self) -> None:
         self.data: Dict[str, Any] = {
+            "project_id": "",
+            "project_name": "",
             "project_description": "",
-            "task_instruction": "",
+            "project_instruction": "",
             "phases": [],
         }
 
@@ -54,9 +58,9 @@ class TasksMarkdownParser:
                 self.data["project_description"] = self._clean_text(
                     section.replace("# Project Description", "").strip()
                 )
-            elif section.startswith("# Task Instruction"):
-                self.data["task_instruction"] = self._clean_text(
-                    section.replace("# Task Instruction", "").strip()
+            elif section.startswith("# Project Instruction"):
+                self.data["project_instruction"] = self._clean_text(
+                    section.replace("# Project Instruction", "").strip()
                 )
 
     def _extract_phases(self, sections: List[str]) -> None:
@@ -174,7 +178,11 @@ class TasksMarkdownParser:
         # Extract unit tests
         unit_tests = self._parse_unit_tests(content)
 
+        # Generate random 8-character alphanumeric task_id
+        task_id = ''.join(random.choices(string.ascii_letters + string.digits, k=8))
+
         task_data = {
+            "task_id": task_id,
             "task_number": task_num,
             "title": task_title,
             "description": description,
@@ -236,6 +244,13 @@ class TasksMarkdownParser:
         text = re.sub(r"\s+", " ", text)
         return text.strip()
 
+    def set_metadata(self, project_name: str = "", project_id: str = "") -> None:
+        """Set project metadata fields."""
+        if project_name:
+            self.data["project_name"] = project_name
+        if project_id:
+            self.data["project_id"] = project_id
+
     def save_to_json(self, output_path: str, indent: int = 2) -> None:
         """Save the parsed data to a JSON file."""
         with open(output_path, "w", encoding="utf-8") as file:
@@ -243,7 +258,7 @@ class TasksMarkdownParser:
 
 
 def convert_md_to_json(
-    md_file_path: str, json_file_path: Optional[str] = None, indent: int = 2
+    md_file_path: str, json_file_path: Optional[str] = None, project_name: str = "", project_id: str = "", indent: int = 2
 ) -> str:
     """
     Convert markdown file to JSON format.
@@ -252,6 +267,8 @@ def convert_md_to_json(
         md_file_path (str): Path to the input markdown file
         json_file_path (str, optional): Path for the output JSON file.
                                        If None, auto-generates based on input filename.
+        project_name (str): Project/repository name
+        project_id (str): Project ID to use for the project
         indent (int): JSON indentation level (default: 2)
 
     Returns:
@@ -273,6 +290,10 @@ def convert_md_to_json(
     # Parse the markdown file
     parser = TasksMarkdownParser()
     parser.parse_file(md_file_path)
+    
+    # Set metadata if provided
+    parser.set_metadata(project_name=project_name, project_id=project_id)
+    
     parser.save_to_json(str(json_file_path), indent)
 
     return str(json_file_path)
