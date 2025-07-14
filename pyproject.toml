@@ -19,7 +19,6 @@ dependencies = [
 
 [project.optional-dependencies]
 dev = [
-    "pytest",
     "ruff",
     "mypy",
     "pre-commit",
@@ -33,6 +32,3 @@ select = ["E", "F", "I"]
 
 
 
-[tool.pytest.ini_options]
-testpaths = ["tests"]
-python_files = ["test_*.py"]
