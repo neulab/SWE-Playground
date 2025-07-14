@@ -3,11 +3,14 @@
 # Use a specific LTS version of the official Node.js image
 FROM node:20-alpine
 
+# Do not modify, install vim
+RUN apt-get update && apt-get install -y vim
+
 # Set the working directory inside the container
 WORKDIR /usr/src/app
 
-# Copy package.json (and package-lock.json if available) into the container
-COPY package*.json ./
+# Do not modify it, it is used for copying the project files into the container
+COPY . .
 
 # Install dependencies
 RUN npm install

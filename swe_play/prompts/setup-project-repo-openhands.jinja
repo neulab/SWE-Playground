@@ -1,7 +1,9 @@
 {% include "common-project-prefix-system.jinja" %}
-We are currently in the middle of the proposal stage. Particularly, a project proposer has already proposed a project idea.
+We are currently in the middle of the proposal stage. Particularly, a project proposer has already proposed a project idea and the tasks for this project has also been proposed in `tasks.md`.
 
-**Task:** {{ project_task }}
+**Project Description:** {{ project_description }}
+
+Notice here are some constraints for the project: {{ constraints }}
 
 Now, it is your job to do the following:
 
@@ -27,9 +29,11 @@ Create the initial project structure with the following components:
 
 The repository should be immediately buildable and runnable, but you should not implement any anythings involved as tasks in `task.md`, which means your implemented setup must not pass any unit test.
 
-You may create some directories and files, but do not write substantial content into them.
+You may create some directories and files, but do not write substantial content into them. The setup should only include the minimal structure needed to support the implementation of tasks.
 
 Also, unit tests should not be setup in this stage.
+
+Notice that if you would like to initialize some classes and their functions, you should raise a `NotImplementedError` in each method body and do not provide any actual implementation, instead of simply leave a "pass".
 
 2. Prepare Docker setup for the project.
 

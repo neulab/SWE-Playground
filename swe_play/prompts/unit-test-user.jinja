@@ -1,0 +1,33 @@
+Project Description: {{ project_description }}
+
+Tasks for the project:
+
+{{ tasks_prompt }}
+
+All of the proposed unit tests:
+
+{{ previous_unit_tests }}
+
+Now you should propose the detailed unit tests for:
+{{ unit_test_prompt }}
+
+You only need to propose the unit tests and do not need to implement them. You should describe:
+
+1. **Test Case Name and Purpose**: A clear, descriptive name for each test case and what specific functionality it verifies.
+
+2. **Test Scenarios**: Cover different scenarios including:
+   - Normal/happy path cases
+   - Edge cases and boundary conditions
+   - Error handling and exception cases
+
+3. **Assertions**: Specify what should be verified/asserted in each test case.
+
+Also, please also take previous unit tests into consideration. To be specific:
+
+1. **Avoid Duplication**: Ensure the new unit tests don't duplicate existing test cases. Review the previous tests to understand what has already been covered.
+
+2. **Consider Dependencies**: Be aware of how the new functionality interacts with previously tested components and ensure integration points are properly tested.
+
+3. **Ensure No Conflicts**: Make sure the new tests won't interfere with or break existing test cases.
+
+Please provide comprehensive test coverage that ensures the reliability and correctness of the implementation. Be precise with your output.

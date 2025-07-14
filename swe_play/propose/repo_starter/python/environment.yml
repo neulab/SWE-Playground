@@ -10,6 +10,9 @@ channels:
 
 # List of dependencies to install
 dependencies:
+  # Development tools
+  - pip
+
   # Specify the Python version
   - python=3.12
 

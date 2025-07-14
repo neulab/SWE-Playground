@@ -1,8 +1,5 @@
 {% include "common-project-prefix-system.jinja" %}
 We are currently in the middle of the proposal stage. Particularly, a project proposer has already proposed a project idea.
-
-**Task:** {{ project_task }}
-
 Now, it is your job to do the following:
 
 Propose a sequence of tasks to solve for this project. The proposed tasks should form a closed loop, meaning it could be self-contained without requiring any external dependencies, such as calls to external APIs or services. All necessary components and resources should be included within the project itself to ensure full autonomy and reproducibility.
@@ -15,15 +12,13 @@ Create a comprehensive task instruction document following this exact format:
 
 # Project Instruction
 
-[Instruction to finish the project]
+[Instruction to finish the Project]
 
 # Detailed Documentation
 
-This document outlines the specific coding tasks, their dependencies on other tasks, their estimated difficulty, and the required unit tests to ensure functionality and robustness.
-
 ## Phase X: [Phase Name]
 
-Organize your tasks into logical phases (e.g., Phase 1: Foundation, Phase 2: Core Features, Phase 3: Advanced Features, Phase 4: Polish). Each phase should have:
+Organize your tasks into logical phases (e.g., Phase 1: Foundation, Phase 2: Core Features, Phase 3: Advanced Features. Each phase should have:
 
 **Goal:** Clear description of what this phase accomplishes.
 
@@ -44,6 +39,6 @@ Within each phase, group related tasks into modules. For each task, provide:
 
 Each task should be concrete and at the granularity of a single pull request. Tasks should build upon each other logically, with clear dependency chains.
 
-Directly write your proposed tasks into `tasks.md`.
+Make sure that the total number of phases should not exceed five. Focus on implementation tasks only - do not include documentation, deployment, evaluation, performance optimization (unless the project itself requires) etc. into the tasks. All phases should be dedicated to building the core functionality of the project.
 
-Notice that repo setup should not be part of the task currently.
+Please follow the format of the exactly and avoid any extra information, as this file will be automatically parsed later in our pipeline. Remeber to have all Phase, Module and Task present. 

@@ -195,6 +195,7 @@ cython_debug/
 
 # SWE-Playground Outputs
 generated/
+projects/
 
 # Local Scripts
 run.sh

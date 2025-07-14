@@ -1,0 +1,71 @@
+{% include "common-project-prefix-system.jinja" %}
+Right now, we are proposing multiple diverse projects for our agent to solve.
+We would like to work on a diverse set of projects to train a generalist SWE-agent that is strong across a wide range of **complex computational tasks**.
+Each task you propose should require multiple phases, 10+ distinct tasks, diverse technologies, and real-world complexity - think of projects that would take a professional developer 2-4 weeks to complete with multiple milestones and deliverables.
+All proposed projects should be finished using Python only.
+
+You should propose diverse Python projects that are **algorithmically complex and require substantial core logic implementation**. Projects should involve implementing sophisticated algorithms, data structures, computational methods, or complex system architectures from scratch.
+
+**REQUIRED CHARACTERISTICS:**
+- **Algorithm-heavy**: Must implement complex algorithms, data structures, or computational methods from scratch
+- **Core logic implementation**: Cannot be solved by simply using existing libraries - requires substantial custom logic
+- **Multi-component architecture**: Systems with multiple interacting components and complex state management
+- **Non-trivial data processing**: Complex parsing, transformation, analysis, or generation of data
+- **Custom protocols/formats**: Implementation of interpreters, compilers, parsers, or custom communication protocols
+
+**COMPLEXITY REQUIREMENTS:**
+- Projects should require implementing 200+ lines of core algorithmic logic (not just glue code)
+- Must involve at least one of: advanced algorithms, mathematical computations, complex state machines, graph algorithms, optimization techniques, parsing/compilation, computer graphics, machine learning from scratch, or distributed algorithms
+- Should require designing and implementing custom data structures or algorithms
+- Cannot be completed by primarily calling existing library functions
+
+**INTERFACE REQUIREMENT:**
+- **Command-line interface only**: All projects must be operated via CLI with command-line arguments, flags, and text-based output
+- **No GUI components**: Projects must not include graphical user interfaces, web interfaces, or visual components
+- **Text-based interaction**: All input/output should be through files, command-line parameters, or terminal text
+- **Scriptable and automatable**: CLI design should enable easy automation and testing
+
+**LIBRARY CONSTRAINTS REQUIREMENT:**
+Each project must include specific constraints on which libraries/frameworks cannot be used to ensure core algorithm implementation from scratch. These constraints should force developers to implement the fundamental algorithms rather than using existing solutions.
+
+**CLEAR SPECIFICATION REQUIREMENT:**
+Each project must be clearly defined with specific, concrete requirements that enable comprehensive test case development. This includes:
+- **Specific input/output formats**: Clear definition of expected inputs and outputs
+- **Concrete functionality**: Detailed description of what the system should do
+- **Measurable performance criteria**: Specific performance requirements or benchmarks
+- **Testable behavior**: Well-defined behaviors that can be verified through testing
+- **Unambiguous success criteria**: Clear definition of what constitutes a successful implementation
+- **Edge case handling**: Explicit requirements for error conditions and boundary cases
+
+**AVOID:**
+- Simple CRUD applications or basic data management systems  
+- Projects that are primarily UI-focused with minimal logic
+- Basic file processing tools that use standard libraries
+- Simple wrappers around existing libraries or APIs
+- Standard desktop applications without algorithmic complexity
+- Basic web applications with simple form handling
+- Projects that can be completed with <100 lines of core logic
+- Vague or ambiguous project descriptions that don't specify concrete requirements
+- Any projects requiring GUI, web interfaces, or visual components such as computer graphics related tasks
+- Any projects requiring non-textual elements such as images or files as input and output
+- Any projects aiming at some open-ended problems and implementation correctness cannot be easily evaluated  
+
+**GOOD PROJECT TYPES:**
+- **Language processors**: Compilers, interpreters, code analyzers, DSL implementations
+- **Complex data structures**: Database engines, distributed data structures
+- **Mathematical tools**: Computer algebra systems, numerical computation libraries, statistical frameworks
+- **Advanced parsers**: Complex format processors, protocol implementations, data transformation engines
+- **Network protocols**: Custom communication protocols, distributed consensus algorithms
+- **Optimization systems**: Constraint solvers, scheduling algorithms, resource allocation engines
+
+Examples of appropriately complex project proposals with clear specifications:
+
+<proposed_project>Build a complete SQL database engine that supports a subset of SQL (SELECT, INSERT, UPDATE, DELETE, CREATE TABLE, CREATE INDEX) with B+ tree indexing, transaction management with ACID properties, and concurrent access. Must handle SQL parsing, query optimization with cost-based optimizer, join algorithms (nested loop, hash join), and support for integer, string, and float data types. The database should pass standard SQL compliance tests and handle concurrent transactions with proper isolation levels. CLI interface for SQL commands with options for database file, transaction mode, and performance statistics.</proposed_project>
+<repo_name>sql-database-engine</repo_name>
+<programming_language>Python</programming_language>
+<constraints>Cannot use any existing database libraries (e.g., SQLite, PostgreSQL bindings). Must implement all SQL parsing, B+ tree structures, and transaction management from scratch without using ORM frameworks or query engines. Only basic file I/O operations allowed.</constraints>
+
+<proposed_project>Create a compiler for a custom functional programming language with static typing, pattern matching, and recursion. Must implement lexical analysis, recursive descent parsing, type inference with Hindley-Milner algorithm, and bytecode generation. The language should support basic arithmetic, boolean operations, lists, tuples, functions, and algebraic data types. The compiler should detect and report syntax errors, type errors, and generate efficient bytecode that runs on a custom virtual machine. CLI interface with compilation flags, optimization levels, and detailed error reporting.</proposed_project>
+<repo_name>functional-language-compiler</repo_name>
+<programming_language>Python</programming_language>
+<constraints>Cannot use any existing parser generators (e.g., PLY, ANTLR, Lark). Must implement all parsing, type inference, and code generation algorithms from scratch without compiler construction frameworks. Only basic string processing and file I/O allowed.</constraints>

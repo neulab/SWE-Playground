@@ -179,7 +179,7 @@ class TasksMarkdownParser:
         unit_tests = self._parse_unit_tests(content)
 
         # Generate random 8-character alphanumeric task_id
-        task_id = ''.join(random.choices(string.ascii_letters + string.digits, k=8))
+        task_id = "".join(random.choices(string.ascii_letters + string.digits, k=8))
 
         task_data = {
             "task_id": task_id,
@@ -258,7 +258,11 @@ class TasksMarkdownParser:
 
 
 def convert_md_to_json(
-    md_file_path: str, json_file_path: Optional[str] = None, project_name: str = "", project_id: str = "", indent: int = 2
+    md_file_path: str,
+    json_file_path: Optional[str] = None,
+    project_name: str = "",
+    project_id: str = "",
+    indent: int = 4,
 ) -> str:
     """
     Convert markdown file to JSON format.
@@ -290,30 +294,30 @@ def convert_md_to_json(
     # Parse the markdown file
     parser = TasksMarkdownParser()
     parser.parse_file(md_file_path)
-    
+
     # Set metadata if provided
     parser.set_metadata(project_name=project_name, project_id=project_id)
-    
+
     parser.save_to_json(str(json_file_path), indent)
 
     return str(json_file_path)
 
 
-def main() -> int:
+def main() -> None:
     parser = argparse.ArgumentParser(description="Extract tasks.md to structured JSON")
-    parser.add_argument("input_file", help="Path to the input markdown file")
-    parser.add_argument("-o", "--output", default="tasks.json", help="Output JSON file path")
-    parser.add_argument("--indent", type=int, default=2, help="JSON indentation")
+    parser.add_argument("--input", help="Path to the input markdown file")
+    parser.add_argument("--output", default="tasks.json", help="Output JSON file path")
+    parser.add_argument("--indent", type=int, default=4, help="JSON indentation")
 
     args = parser.parse_args()
 
     try:
-        output_path = convert_md_to_json(args.input_file, args.output, args.indent)
+        output_path = convert_md_to_json(args.input, args.output, args.indent)
         print(f"Successfully extracted tasks to '{output_path}'")
 
         # Parse again to get summary
         parser_instance = TasksMarkdownParser()
-        data = parser_instance.parse_file(args.input_file)
+        data = parser_instance.parse_file(args.input)
 
         # Print summary
         total_tasks = sum(
@@ -325,11 +329,9 @@ def main() -> int:
             f"{total_tasks} tasks"
         )
 
-        return 0
     except Exception as e:
         print(f"Error processing file: {e}")
-        return 1
 
 
 if __name__ == "__main__":
-    exit(main())
+    main()

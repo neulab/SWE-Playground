@@ -31,7 +31,7 @@
 Automated AI pipeline for generating and setting up new software engineering projects.
 
 ```bash
-python -m swe_play.propose.project --max-tasks 20 --model claude-sonnet-4-20250514
+python -m swe_play.propose.pipeline --model claude-sonnet-4-20250514 --output generated --docker
 ```
 
 📖 **[Detailed Pipeline Documentation](swe_play/propose/README.md)**

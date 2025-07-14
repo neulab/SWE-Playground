@@ -1,0 +1,69 @@
+Please propose exactly {{ num_projects }} diverse projects for the agent to work on, along with names for each project repo.
+Format your output as a list of exactly {{ num_projects }} projects, each in the following format:
+
+Project 1:
+<proposed_project>...</proposed_project>
+<repo_name>...</repo_name>
+<programming_language>...</programming_language>
+<constraints>...</constraints>
+
+Project 2:
+<proposed_project>...</proposed_project>
+<repo_name>...</repo_name>
+<programming_language>...</programming_language>
+<constraints>...</constraints>
+
+... (continue for all projects)
+
+Each proposed project should be **algorithmically complex and computationally challenging** with the following characteristics:
+- **Algorithm-heavy**: Must implement complex algorithms, data structures, or computational methods from scratch
+- **Core logic implementation**: Cannot be solved by simply using existing libraries - requires substantial custom logic
+- **Multi-component architecture**: Systems with multiple interacting components and complex state management
+- **Non-trivial data processing**: Complex parsing, transformation, analysis, or generation of data
+- **Custom protocols/formats**: Implementation of interpreters, compilers, parsers, or custom communication protocols
+
+**INTERFACE REQUIREMENT:**
+- **Command-line interface only**: All projects must be operated via CLI with command-line arguments, flags, and text-based output
+- **No GUI components**: Projects must not include graphical user interfaces, web interfaces, or visual components
+- **Text-based interaction**: All input/output should be through files, command-line parameters, or terminal text
+- **Scriptable and automatable**: CLI design should enable easy automation and testing
+
+**LIBRARY CONSTRAINTS REQUIREMENT:**
+Each project must include specific constraints in the <constraints> section about which libraries/frameworks cannot be used. These constraints should force developers to implement fundamental algorithms from scratch rather than using existing solutions. Examples:
+- Computer algebra systems: "Cannot use numpy, scipy, or sympy"
+- Machine learning: "Cannot use TensorFlow, PyTorch, or scikit-learn"
+- Cryptography: "Cannot use existing crypto libraries like cryptography or pycrypto"
+- Database engines: "Cannot use SQLite, PostgreSQL, or any existing database libraries"
+
+**CLEAR SPECIFICATION REQUIREMENT:**
+Each project must be clearly defined with specific, concrete requirements that enable comprehensive test case development:
+- **Specific input/output formats**: Clearly define expected inputs and outputs with exact formats
+- **Concrete functionality**: Detailed description of what the system should do with specific behaviors
+- **Measurable performance criteria**: Include specific performance requirements, benchmarks, or constraints
+- **Testable behavior**: Well-defined behaviors that can be verified through unit tests and integration tests
+- **Unambiguous success criteria**: Clear definition of what constitutes a successful implementation
+- **Edge case handling**: Explicit requirements for error conditions, boundary cases, and failure modes
+
+All projects should use Python as the programming language. Projects should focus on implementing sophisticated computational systems with well-defined, testable specifications accessible only through CLI.
+
+**DIVERSITY REQUIREMENT:**
+Ensure maximum diversity across the 50 projects by:
+- **Distributing across complexity areas**: Include projects from each of the complexity areas listed above, not clustering around just a few areas
+- **Varying system types**: Mix low-level systems, high-level algorithms, and mid-level tools
+- **Different problem domains**: Include projects spanning various domains
+- **Balanced complexity focus**: Some projects should focus on data structures, others on algorithms, others on system design, others on mathematical computation
+- **Avoid repetition**: Each project should address distinctly different computational challenges and use cases
+
+**AVOID** (these are too simple, too vague, or inappropriate):
+- Basic CRUD applications or simple data management
+- Standard desktop/web apps without algorithmic complexity  
+- File processing tools using standard libraries
+- Simple wrappers around existing libraries
+- Projects primarily focused on UI with minimal logic
+- Basic automation scripts or simple utilities
+- Vague or ambiguous project descriptions that don't specify concrete requirements
+- Any projects requiring GUI, web interfaces, or visual components such as computer graphics related tasks
+- Any projects requiring non-textual elements such as images or files as input and output
+- Any projects aiming at some open-ended problems and implementation correctness cannot be easily evaluated  
+
+Generate the projects as you are required. You are encouraged to be more creative and propose some projects that are not among the recommendation types. 
