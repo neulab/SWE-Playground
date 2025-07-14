@@ -68,9 +68,7 @@ def propose_tasks(
 
     tasks_match = re.search(r"<tasks>(.*?)</tasks>", response, re.DOTALL)
     if not tasks_match:
-        raise Exception(
-            f"Invalid response format from LLM. Expected <tasks> tag. " f"Got: {response}"
-        )
+        raise Exception(f"Invalid response format from LLM. Expected <tasks> tag. Got: {response}")
 
     tasks = tasks_match.group(1).strip()
     return tasks

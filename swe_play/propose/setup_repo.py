@@ -71,6 +71,7 @@ def setup_repo(
         str(project_dir / "tasks.json"),
         project_name=repo_name,
         project_id=project_id,
+        constraints=constraints,
     )
     print("Tasks written and converted successfully")
 
@@ -136,7 +137,7 @@ def create_docker_image(project_path: str) -> str:
     while True:
         success, stdout, stderr = attempt_docker_build()
         if success:
-            print(f"Docker image built successfully for {repo_name} after {iter_cnt+1} attempts.")
+            print(f"Docker image built successfully for {repo_name} after {iter_cnt + 1} attempts.")
             try:
                 # Push to Docker Hub
                 subprocess.run(
@@ -204,7 +205,7 @@ Examples:
         "--model",
         type=str,
         default="neulab/claude-sonnet-4-20250514",
-        help="LLM model to use for project proposal " "(default: neulab/claude-sonnet-4-20250514)",
+        help="LLM model to use for project proposal (default: neulab/claude-sonnet-4-20250514)",
     )
 
     parser.add_argument(

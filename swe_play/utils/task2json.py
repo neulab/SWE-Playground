@@ -262,6 +262,7 @@ def convert_md_to_json(
     json_file_path: Optional[str] = None,
     project_name: str = "",
     project_id: str = "",
+    constraints: str = "",
     indent: int = 4,
 ) -> str:
     """
@@ -273,6 +274,7 @@ def convert_md_to_json(
                                        If None, auto-generates based on input filename.
         project_name (str): Project/repository name
         project_id (str): Project ID to use for the project
+        constraints (str): Project constraints
         indent (int): JSON indentation level (default: 2)
 
     Returns:
@@ -297,6 +299,8 @@ def convert_md_to_json(
 
     # Set metadata if provided
     parser.set_metadata(project_name=project_name, project_id=project_id)
+
+    parser.data["constraints"] = constraints
 
     parser.save_to_json(str(json_file_path), indent)
 

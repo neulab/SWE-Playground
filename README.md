@@ -36,6 +36,16 @@ python -m swe_play.propose.pipeline --model claude-sonnet-4-20250514 --output ge
 
 📖 **[Detailed Pipeline Documentation](swe_play/propose/README.md)**
 
+## Data Rollout Pipeline
+
+Automated AI pipeline for data rollout on proposed tasks.
+
+```bash
+python -m swe_play.rollout.rollout --repo-path /path/to/your/project/repo --runtime-folder runtime
+```
+
+📖 **[Detailed Pipeline Documentation](swe_play/rollout/README.md)**
+
 ## Contributing
 
 1. Install development dependencies: `pip install -e ".[dev]"`

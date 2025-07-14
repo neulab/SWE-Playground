@@ -7,7 +7,11 @@ from typing import Any
 
 
 def call_openhands_raw(
-    prompt: str, config_file_path: str | None = None, directory: str | None = None, **kwargs: Any
+    prompt: str,
+    config_file_path: str | None = None,
+    directory: str | None = None,
+    output_dir: str | None = None,
+    **kwargs: Any,
 ) -> subprocess.CompletedProcess[str]:
     """Call the OpenHands agent with a given prompt and configuration and return the raw
     subprocess.CompletedProcess result.
@@ -47,6 +51,30 @@ def call_openhands_raw(
         config_content = re.sub(
             r'workspace_base\s*=\s*"[^"]*"', f'workspace_base = "{directory}"', config_content
         )
+
+        if output_dir is not None:
+            config_content = re.sub(
+                r'save_trajectory_path\s*=\s*"[^"]*"',
+                f'save_trajectory_path = "{output_dir}/trajectories"',
+                config_content,
+            )
+            config_content = re.sub(
+                r'log_completions_folder\s*=\s*"[^"]*"',
+                f'log_completions_folder = "{output_dir}/log_completions"',
+                config_content,
+            )
+        else:
+            config_content = re.sub(
+                r'save_trajectory_path\s*=\s*"[^"]*"',
+                'save_trajectory_path = "./trajectories"',
+                config_content,
+            )
+            config_content = re.sub(
+                r'log_completions_folder\s*=\s*"[^"]*"',
+                'log_completions_folder = "./log_completions"',
+                config_content,
+            )
+
     with open(config_file_path, "w") as f:
         f.write(config_content)
 
@@ -103,4 +131,29 @@ def call_openhands(
     """
     print("Repo directory:", directory)
     result = call_openhands_raw(prompt, config_file_path, directory)
+    return result.stdout
+
+
+def call_openhands_rollout(
+    prompt: str,
+    config_file_path: str | None = None,
+    directory: str | None = None,
+    output_dir: str | None = None,
+) -> str:
+    """Call OpenHands agent and return just the stdout output.
+
+    Args:
+        prompt: The task prompt to send to the OpenHands agent.
+        config_file_path: Path to the config file. If None, will use OPENHANDS_CONFIG_PATH env var.
+        directory: Working directory for the OpenHands agent. If provided, adds -d flag.
+
+    Returns:
+        The stdout output from the OpenHands command.
+
+    Raises:
+        ValueError: If no config file path is provided and OPENHANDS_CONFIG_PATH env var is not set.
+        subprocess.CalledProcessError: If the OpenHands command fails.
+    """
+    print("Repo directory:", directory)
+    result = call_openhands_raw(prompt, config_file_path, directory, output_dir)
     return result.stdout
