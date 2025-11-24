@@ -1,4 +1,4 @@
-"""Project proposal and initialization pipeline."""
+"""Repositroy Setup pipeline."""
 
 import argparse
 import json
@@ -8,6 +8,7 @@ import sys
 import time
 from pathlib import Path
 
+from swe_play.propose.propose_tasks import generate_unit_tests
 from swe_play.utils.call_openhands import call_openhands
 from swe_play.utils.prompt_retriever import PromptRetriever
 from swe_play.utils.task2json import convert_md_to_json
@@ -52,7 +53,7 @@ def setup_repo(
     else:
         raise Exception(f"Unsupported programming language: {programming_language}")
     Path(output_folder).mkdir(exist_ok=True)
-    project_dir = Path(output_folder) / repo_name
+    project_dir = (Path(output_folder) / repo_name).absolute()
     if project_dir.exists():
         raise Exception(f"Project directory already exists: {project_dir}")
 
@@ -196,16 +197,11 @@ def main() -> None:
         formatter_class=argparse.RawDescriptionHelpFormatter,
         epilog="""
 Examples:
-  python -m swe_play.propose.setup_repo                           # Default settings
-  python -m swe_play.propose.setup_repo --model gpt-4o            # Custom model
+  python -m swe_play.propose.setup_repo                                 # Default settings
+  python -m swe_play.propose.setup_repo --project-file /path/project.json
+  python -m swe_play.propose.setup_repo --output /path/output           # Custom folder
+  python -m swe_play.propose.setup_repo --docker                        # Create Docker image
         """,
-    )
-
-    parser.add_argument(
-        "--model",
-        type=str,
-        default="neulab/claude-sonnet-4-20250514",
-        help="LLM model to use for project proposal (default: neulab/claude-sonnet-4-20250514)",
     )
 
     parser.add_argument(
@@ -227,6 +223,16 @@ Examples:
         type=bool,
         default=False,
         help="Whether to create a Docker image for the project (default: False)",
+    )
+
+    parser.add_argument(
+        "--model",
+        type=str,
+        default="claude-sonnet-4-20250514",
+        help=(
+            "LLM model to use for test documentation generation "
+            "(default: claude-sonnet-4-20250514)"
+        ),
     )
 
     args = parser.parse_args()
@@ -260,6 +266,9 @@ Examples:
         if args.docker:
             image_tag = create_docker_image(project_path=project_path)
             print(f"📁 Docker image created at: {image_tag}")
+
+        # Move test documentation after repository setup
+        generate_unit_tests(project_path=project_path, model=args.model)
 
     except Exception as e:
         print(f"❌ Pipeline failed: {e}")

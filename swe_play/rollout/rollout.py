@@ -7,13 +7,14 @@ import subprocess
 import time
 from pathlib import Path
 
-from swe_play.utils.call_openhands import call_openhands, call_openhands_rollout
+from swe_play.rollout import commit0, swe_bench, swt_bench
+from swe_play.utils.call_openhands import call_openhands_rollout
 from swe_play.utils.convert_data import convert_data
 from swe_play.utils.prompt_retriever import PromptRetriever
 
 
 def generate_unit_test(
-    task_number: str, task_data: dict, project_dir: Path, project_description: str
+    task_number: str, task_data: dict, project_dir: Path, project_description: str, save_dir: Path
 ) -> None:
     """Generate unit tests for a specific task using OpenHands.
 
@@ -42,44 +43,44 @@ def generate_unit_test(
     )
 
     try:
-        openhands_output = call_openhands(
-            prompt=unit_test_creation_prompt, directory=str(project_dir)
+        openhands_output = call_openhands_rollout(
+            prompt=unit_test_creation_prompt, directory=str(project_dir), output_dir=str(save_dir)
         )
         print(f"OpenHands output: {openhands_output}")
     except Exception as e:
         raise Exception(f"OpenHands unit tests creation failed: {e}")
 
-    print("Continue generating...")
-    unit_test_creation_continue_prompt = prompt_retriever.get_prompt(
-        "generate-unit-test-continue-openhands",
-        project_task=project_description,
-        unit_test_prompt=test_prompt,
-    )
+    # print("Continue generating...")
+    # unit_test_creation_continue_prompt = prompt_retriever.get_prompt(
+    #     "generate-unit-test-continue-openhands",
+    #     project_task=project_description,
+    #     unit_test_prompt=test_prompt,
+    # )
 
-    try:
-        openhands_output = call_openhands(
-            prompt=unit_test_creation_continue_prompt, directory=str(project_dir)
-        )
-        print(f"OpenHands output: {openhands_output}")
-    except Exception as e:
-        raise Exception(f"OpenHands unit tests creation failed: {e}")
+    # try:
+    #     openhands_output = call_openhands(
+    #         prompt=unit_test_creation_continue_prompt, directory=str(project_dir)
+    #     )
+    #     print(f"OpenHands output: {openhands_output}")
+    # except Exception as e:
+    #     raise Exception(f"OpenHands unit tests creation failed: {e}")
 
 
 def finish_task(
     task_number: str,
-    project_description: str,
+    task_description: str,
     constraints: str,
     project_dir: Path,
-    current_dir: Path,
+    save_dir: Path,
 ) -> None:
     """Complete a task implementation using OpenHands.
 
     Args:
         task_number: The task number to complete (e.g., "1.2.3")
-        project_description: Description of the overall project
+        task_description: Description of the task
         constraints: Project constraints and requirements
         project_dir: Path to the project directory
-        current_dir: Path to the current runtime directory for output
+        save_dir: Path to the current runtime directory for output
 
     Raises:
         Exception: If OpenHands task completion fails
@@ -88,14 +89,14 @@ def finish_task(
     finish_task_prompt = prompt_retriever.get_prompt(
         "finish-task-openhands",
         task_number=task_number,
-        project_description=project_description,
+        task_description=task_description,
         constraints=constraints,
     )
     try:
         openhands_output = call_openhands_rollout(
             prompt=finish_task_prompt,
             directory=str(project_dir),
-            output_dir=str(current_dir),
+            output_dir=str(save_dir),
         )
         print("OpenHands successfully finish the task")
         print(f"OpenHands output: {openhands_output}")
@@ -116,12 +117,10 @@ def check_unit_test_diff(
         implementation_tests_dir: Path to the implementation test directory
         all_tasks: List of all task numbers to check
 
-    Returns:
-        True if no differences found in unit tests, False otherwise
-
     Raises:
         Exception: If diff command execution fails
     """
+
     flag = True
 
     for task_number in all_tasks:
@@ -185,6 +184,14 @@ def run_unit_tests(project_dir: Path, all_tasks: list[str]) -> bool:
     for task in all_tasks:
         test_script = project_dir / "tests" / f"{task}.sh"
         if not test_script.exists():
+            # Debug: Show what files actually exist in the tests directory
+            tests_dir = project_dir / "tests"
+            if tests_dir.exists():
+                existing_files = list(tests_dir.iterdir())
+                print(f"Tests directory {tests_dir} exists but does not contain {task}.sh")
+                print(f"Available files in tests directory: {existing_files}")
+            else:
+                print(f"Tests directory {tests_dir} does not exist")
             raise Exception(f"Test script {test_script} does not exist.")
 
         result = subprocess.run(
@@ -202,7 +209,13 @@ def run_unit_tests(project_dir: Path, all_tasks: list[str]) -> bool:
     return True
 
 
-def main(repo_path: str, runtime_folder: str) -> None:
+def main(
+    repo_path: str,
+    runtime_folder: str,
+    generate_swe: bool = False,
+    generate_swt: bool = False,
+    generate_commit0: bool = False,
+) -> None:
     """Main rollout pipeline for automated project task completion.
 
     Executes a complete rollout pipeline that:
@@ -213,10 +226,14 @@ def main(repo_path: str, runtime_folder: str) -> None:
        - Validates implementation against unit tests
        - Retries up to 3 times if tests fail
     3. Continues until all tasks are completed or maximum retries exceeded
+    4. Optionally generates task-specific data (SWE-bench, SWT-Bench, Commit-0)
 
     Args:
         repo_path: The path of the project repository to process
         runtime_folder: The folder to save the runtime data
+        generate_swe: Whether to generate SWE-bench data after rollout
+        generate_swt: Whether to generate SWT-Bench data after rollout
+        generate_commit0: Whether to generate Commit-0 data after rollout
 
     Raises:
         Exception: If project configuration cannot be loaded or critical failures occur
@@ -224,6 +241,8 @@ def main(repo_path: str, runtime_folder: str) -> None:
     project_dir = Path(repo_path)
     runtime_dir = Path(runtime_folder) / f"runtime_{str(int(time.time()))}"
     runtime_dir.mkdir(parents=True, exist_ok=True)
+    converted_data_dir = runtime_dir / "converted_data"
+    converted_data_dir.mkdir(parents=True, exist_ok=True)
 
     with open(project_dir / "tasks.json", "r") as f:
         task = json.load(f)
@@ -287,10 +306,24 @@ def main(repo_path: str, runtime_folder: str) -> None:
             # Generate unit test
             # Copy the project directory to the runtime_dir
             project_dir_unit_test = runtime_dir / f"{project_name}_{task_number}_unit_test"
-            save_dir = runtime_dir / f"log_{task_number}"
-            shutil.copytree(project_dir, project_dir_unit_test)
-            print("Calling Openhands to generate unit test...")
-            generate_unit_test(task_number, task_data, project_dir_unit_test, project_description)
+            save_dir_unit_test = runtime_dir / f"log_{task_number}_unit_test"
+            save_dir_implementation = runtime_dir / f"log_{task_number}_implementation"
+
+            if project_dir_unit_test.exists():
+                print(
+                    "Project directory for task "
+                    f"{task_number} already exists. Skipping unit test generation."
+                )
+            else:
+                shutil.copytree(project_dir, project_dir_unit_test)
+                print("Calling Openhands to generate unit test...")
+                generate_unit_test(
+                    task_number,
+                    task_data,
+                    project_dir_unit_test,
+                    project_description,
+                    save_dir_unit_test,
+                )
 
             # Rollout data
             # First we employ OpenHands to finish the task
@@ -298,48 +331,121 @@ def main(repo_path: str, runtime_folder: str) -> None:
                 runtime_dir / f"{project_name}_{task_number}_implementation"
             )
 
-            shutil.copytree(project_dir_unit_test, project_dir_implementation)
-            print("Calling Openhands to finish the task...")
-            finish_task(
-                task_number,
-                project_description,
-                constraints,
-                project_dir_implementation,
-                save_dir,
-            )
-            # Then run the unit tests to check correctness
-            # Call the function to check for unit test modifications
-            res_diff = check_unit_test_diff(
-                project_dir_unit_test, project_dir_implementation, all_tasks
-            )
-            if not res_diff:
-                # Copy the unit tests from unit_test to implementation
-                unit_test_tests_dir = project_dir_unit_test / "tests"
-                implementation_tests_dir = project_dir_implementation / "tests"
-                shutil.rmtree(implementation_tests_dir)
-                shutil.copytree(unit_test_tests_dir, implementation_tests_dir)
-
-            # Then run the unit tests to check correctness
-            res_test = run_unit_tests(project_dir_implementation, all_tasks)
-            if res_test:
-                tasks_cnt += 1
-                convert_data(str(runtime_dir), str(save_dir), task_number)
+            if project_dir_implementation.exists():
+                print(
+                    "Project directory for task "
+                    f"{task_number} already exists. Skipping task completion."
+                )
                 break
             else:
-                print("Unit test failed for the current task. Conduct another trial.")
-                iter_cnt += 1
-                if iter_cnt > 3:
-                    print(
-                        f"Three trials failed for the current task. "
-                        f"Project exits with {tasks_cnt} tasks finished."
+                shutil.copytree(project_dir_unit_test, project_dir_implementation)
+                print("Calling Openhands to finish the task...")
+                finish_task(
+                    task_number,
+                    task_data["task_description"],
+                    constraints,
+                    project_dir_implementation,
+                    save_dir_implementation,
+                )
+
+                # Then run the unit tests to check correctness
+                # Call the function to check for unit test modifications
+                res_diff = check_unit_test_diff(
+                    project_dir_unit_test, project_dir_implementation, all_tasks
+                )
+                if not res_diff:
+                    # Copy the unit tests from unit_test to implementation
+                    unit_test_tests_dir = project_dir_unit_test / "tests"
+                    implementation_tests_dir = project_dir_implementation / "tests"
+
+                    print(f"Copying from {unit_test_tests_dir} to {implementation_tests_dir}")
+                    print(f"Source directory exists: {unit_test_tests_dir.exists()}")
+                    if unit_test_tests_dir.exists():
+                        source_files = list(unit_test_tests_dir.iterdir())
+                        print(f"Source directory contains: {source_files}")
+
+                    if implementation_tests_dir.exists():
+                        shutil.rmtree(implementation_tests_dir)
+
+                    if not unit_test_tests_dir.exists():
+                        raise Exception(
+                            f"Source test directory {unit_test_tests_dir} does not exist"
+                        )
+
+                    try:
+                        shutil.copytree(unit_test_tests_dir, implementation_tests_dir)
+                    except Exception as e:
+                        raise Exception(
+                            "Failed to copy tests from "
+                            f"{unit_test_tests_dir} to {implementation_tests_dir}: {e}"
+                        )
+
+                    dest_exists = implementation_tests_dir.exists()
+                    print(f"Destination directory exists after copy: {dest_exists}")
+                    if implementation_tests_dir.exists():
+                        dest_files = list(implementation_tests_dir.iterdir())
+                        print(f"Destination directory contains: {dest_files}")
+
+                # Then run the unit tests to check correctness
+                res_test = run_unit_tests(project_dir_implementation, all_tasks)
+                if res_test:
+                    tasks_cnt += 1
+                    convert_data(
+                        str(runtime_dir), str(save_dir_unit_test), task_number, "unit_test"
                     )
-                    exit(0)
-                shutil.rmtree(project_dir_implementation)
-                shutil.rmtree(project_dir_unit_test)
+                    convert_data(
+                        str(runtime_dir),
+                        str(save_dir_implementation),
+                        task_number,
+                        "implementation",
+                    )
+                    break
+                else:
+                    print("Unit test failed for the current task. Conduct another trial.")
+                    iter_cnt += 1
+                    if iter_cnt > 3:
+                        print(
+                            f"Three trials failed for the current task. "
+                            f"Project exits with {tasks_cnt} tasks finished."
+                        )
+                        exit(0)
+                    shutil.rmtree(project_dir_implementation)
+                    shutil.rmtree(project_dir_unit_test)
 
         project_dir = project_dir_implementation
 
     print(f"Rollout pipeline completed successfully. Totally {tasks_cnt} tasks finished.")
+
+    # Generate task-specific data if requested
+    if generate_swe:
+        print("\n" + "=" * 60)
+        print("Generating SWE-bench data...")
+        print("=" * 60)
+        try:
+            swe_bench.main(repo_path, runtime_folder)
+            print("✅ SWE-bench data generation completed successfully!")
+        except Exception as e:
+            print(f"⚠️  SWE-bench data generation failed: {e}")
+
+    if generate_swt:
+        print("\n" + "=" * 60)
+        print("Generating SWT-Bench data...")
+        print("=" * 60)
+        try:
+            swt_bench.main(repo_path, runtime_folder)
+            print("✅ SWT-Bench data generation completed successfully!")
+        except Exception as e:
+            print(f"⚠️  SWT-Bench data generation failed: {e}")
+
+    if generate_commit0:
+        print("\n" + "=" * 60)
+        print("Generating Commit-0 data...")
+        print("=" * 60)
+        try:
+            commit0.main(repo_path, runtime_folder)
+            print("✅ Commit-0 data generation completed successfully!")
+        except Exception as e:
+            print(f"⚠️  Commit-0 data generation failed: {e}")
 
 
 if __name__ == "__main__":
@@ -350,11 +456,15 @@ if __name__ == "__main__":
     and implementing functionality using OpenHands.
     """
     parser = argparse.ArgumentParser(
-        description="Run OpenHands to generate unit tests and finish the project task by task",
+        description=("Run OpenHands to generate unit tests and finish the project task by task"),
         formatter_class=argparse.RawDescriptionHelpFormatter,
         epilog="""
 Examples:
-  python -m swe_play.rollout.rollout --repo-path /path/to/my_project    # Run rollout for my_project
+  python -m swe_play.rollout.rollout --repo-path /path/to/my_project         # Run
+  python -m swe_play.rollout.rollout --repo-path /path/to/my_project --swe --swt
+      # Generate SWE-bench and SWT-Bench data
+  python -m swe_play.rollout.rollout --repo-path /path/to/my_project --commit0
+      # Generate Commit-0 data
         """,
     )
 
@@ -372,6 +482,30 @@ Examples:
         help="The folder to save the runtime data",
     )
 
+    parser.add_argument(
+        "--swe",
+        action="store_true",
+        help="Generate SWE-bench data after completing the rollout",
+    )
+
+    parser.add_argument(
+        "--swt",
+        action="store_true",
+        help="Generate SWT-Bench data after completing the rollout",
+    )
+
+    parser.add_argument(
+        "--commit0",
+        action="store_true",
+        help="Generate Commit-0 data after completing the rollout",
+    )
+
     args = parser.parse_args()
 
-    main(args.repo_path, args.runtime_folder)
+    main(
+        args.repo_path,
+        args.runtime_folder,
+        generate_swe=args.swe,
+        generate_swt=args.swt,
+        generate_commit0=args.commit0,
+    )

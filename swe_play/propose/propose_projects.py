@@ -1,4 +1,4 @@
-"""Propose diverse projects for SWE-agent training."""
+"""Project Proposal pipeline."""
 
 import argparse
 import json
@@ -11,7 +11,7 @@ from swe_play.utils.prompt_retriever import PromptRetriever
 
 
 def propose_projects(
-    model: str = "neulab/claude-sonnet-4-20250514",
+    model: str = "claude-sonnet-4-20250514",
     num_projects: int = 1,
     output_folder: str | None = None,
 ) -> list[dict[str, str]]:
@@ -70,6 +70,8 @@ def propose_projects(
         )
 
     if output_folder is not None:
+        if not Path(output_folder).exists():
+            Path(output_folder).mkdir(parents=True, exist_ok=True)
         for project in projects:
             with open(Path(output_folder) / f"{project['repo_name']}.json", "w") as f:
                 json.dump(project, f)
@@ -85,8 +87,8 @@ def main() -> None:
         epilog="""
 Examples:
   python -m swe_play.propose.propose_projects                              # Default settings
-  python -m swe_play.propose.propose_projects --model gpt-4o               # Custom model
-  python -m swe_play.propose.propose_projects --output projects            # Custom output folder
+  python -m swe_play.propose.propose_projects --model claude-sonnet-4-20250514
+  python -m swe_play.propose.propose_projects --output projects            # Custom folder
         """,
     )
 
@@ -100,8 +102,8 @@ Examples:
     parser.add_argument(
         "--model",
         type=str,
-        default="neulab/claude-sonnet-4-20250514",
-        help="LLM model to use for project proposal (default: neulab/claude-sonnet-4-20250514)",
+        default="claude-sonnet-4-20250514",
+        help="LLM model to use for project proposal (default: claude-sonnet-4-20250514)",
     )
 
     parser.add_argument(

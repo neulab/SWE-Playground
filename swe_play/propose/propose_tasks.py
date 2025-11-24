@@ -1,4 +1,4 @@
-"""Project proposal and initialization pipeline."""
+"""Task proposal pipeline."""
 
 import argparse
 import json
@@ -195,6 +195,13 @@ Examples:
         help="file of the proposed project (default: empty)",
     )
 
+    parser.add_argument(
+        "--project-dir",
+        type=str,
+        default="",
+        help="file to save the proposed tasks (default: empty)",
+    )
+
     args = parser.parse_args()
 
     try:
@@ -217,6 +224,8 @@ Examples:
             project["tasks"] = tasks
             json.dump(project, f)
         print(f"📁 Tasks saved to: {args.project_file}")
+
+        # generate_unit_tests(args.project_dir, model=args.model)
 
     except Exception as e:
         print(f"❌ Tasks proposal failed: {e}")

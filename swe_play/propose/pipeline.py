@@ -9,7 +9,7 @@ from swe_play.propose.setup_repo import create_docker_image, setup_repo
 
 
 def create_project_pipeline(
-    model: str = "neulab/claude-sonnet-4-20250514",
+    model: str = "claude-sonnet-4-20250514",
     output_folder: str = "generated",
     docker: bool = False,
 ) -> dict[str, str]:
@@ -17,7 +17,7 @@ def create_project_pipeline(
 
     Args:
         model: The LLM model to use for project proposal
-               (default: neulab/claude-sonnet-4-20250514)
+               (default: claude-sonnet-4-20250514)
         output_folder: The folder to save the project
                (default: generated)
         docker: Whether to create a Docker image for the project
@@ -93,17 +93,17 @@ def main() -> None:
         formatter_class=argparse.RawDescriptionHelpFormatter,
         epilog="""
 Examples:
-  python -m swe_play.propose.pipeline                         # Default settings
-  python -m swe_play.propose.pipeline --model gpt-4o          # Custom model
-  python -m swe_play.propose.pipeline --output                # Custom output folder
+  python -m swe_play.propose.pipeline                                # Default settings
+  python -m swe_play.propose.pipeline --model claude-sonnet-4-20250514
+  python -m swe_play.propose.pipeline --output <folder>              # Custom output folder
         """,
     )
 
     parser.add_argument(
         "--model",
         type=str,
-        default="neulab/claude-sonnet-4-20250514",
-        help="LLM model to use for project proposal (default: neulab/claude-sonnet-4-20250514)",
+        default="claude-sonnet-4-20250514",
+        help="LLM model to use for project proposal (default: claude-sonnet-4-20250514)",
     )
 
     parser.add_argument(

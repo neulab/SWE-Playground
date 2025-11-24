@@ -4,7 +4,7 @@ import re
 from pathlib import Path
 
 
-def convert_data(runtime_dir: str, save_dir: str, task_number: str) -> None:
+def convert_data(runtime_dir: str, save_dir: str, task_number: str, stage: str) -> None:
     """
     Convert the data in the runtime directory to a JSON file.
     """
@@ -33,15 +33,21 @@ def convert_data(runtime_dir: str, save_dir: str, task_number: str) -> None:
 
     formatted_messages = []
     for item in data["messages"]:
-        item = {"content": item["content"][0]["text"], "role": item["role"]}
+        if isinstance(item["content"], list):
+            item = {"content": item["content"][0]["text"], "role": item["role"]}
+        else:
+            item = {"content": item["content"], "role": item["role"]}
         formatted_messages.append(item)
     response = data["response"]["choices"][0]["message"]
-    item = {"content": response["content"], "role": response["role"]}
+    if isinstance(response["content"], list):
+        item = {"content": response["content"][0]["text"], "role": response["role"]}
+    else:
+        item = {"content": response["content"], "role": response["role"]}
     formatted_messages.append(item)
     del formatted_messages[2]
 
     # Save the formatted messages
-    save_path = Path(runtime_dir) / "converted_data" / f"{task_number}.json"
+    save_path = Path(runtime_dir) / "converted_data" / f"{task_number}_{stage}.json"
     with open(save_path, "w") as f:
         wdata = {"messages": formatted_messages}
         json.dump(wdata, f, indent=4)

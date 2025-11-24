@@ -96,14 +96,34 @@ def call_openhands_raw(
     #     cmd.extend(["-d", directory])
 
     # Set default kwargs
-    default_kwargs: dict[str, bool] = {"text": True, "capture_output": True, "check": True}
+    default_kwargs: dict[str, Any] = {
+        "text": True,
+        "capture_output": True,
+        "check": True,
+    }
     default_kwargs.update(kwargs)
 
     # Execute the command
     try:
-        result = subprocess.run(cmd, text=True, capture_output=True, check=True, **kwargs)
+        try:
+            result = subprocess.run(cmd, timeout=1200, **default_kwargs)
+
+        except subprocess.TimeoutExpired:
+            # Sometimes OpenHands got stuck after finishing its task
+            # Simulate a successful result with empty output if timeout occurs
+            result = subprocess.CompletedProcess(args=cmd, returncode=0, stdout="", stderr="")
+            print(
+                "\033[91m[Timeout] OpenHands call timed out after 20 minutes. "
+                "Returning empty result.\033[0m"
+            )
         return result
     except subprocess.CalledProcessError as e:
+        # Print error details for debugging
+        print("\033[91m[ERROR] OpenHands command failed:\033[0m")
+        if e.stdout:
+            print(f"\n[STDOUT]\n{e.stdout}")
+        if e.stderr:
+            print(f"\n[STDERR]\n{e.stderr}")
         raise subprocess.CalledProcessError(
             e.returncode, e.cmd, output=e.stdout, stderr=e.stderr
         ) from e

@@ -1,0 +1,23 @@
+You are given a project directory with working code and a specific issue that needs to be applied to the codebase.
+
+Your task is to read the issue description and apply the described problem to the current working code. Also, you should modify the test files so that the issue cannot be detected by the tests. This means you should INTRODUCE the bug or issue described, but still making that all the unit tests under `tests/` can pass by modifying the test scripts to remove the specific test functions related to this issue and also modify other functions is this issue will also cause them to fail.
+
+**Issue to Apply:**
+{{ issue_description }}
+
+**Project Description:**
+{{ project_description }}
+
+**Task Information:**
+Task {{ task_number }}: {{ task_description }}
+
+**Instructions:**
+1. First, understand the current working implementation by reading the relevant source code
+2. Identify where the issue should be applied based on the issue description
+3. Make the necessary code changes to introduce the described issue/bug
+4. The goal is to make the unit tests fail by introducing this specific issue
+5. Run the unit tests of this task to ensure they no longer pass. DO NOT edit unit test files.
+6. Keep changes minimal and focused on the specific issue described
+7. Ensure the code still compiles/runs but with the intended bug/issue
+
+**Important:** You are introducing a problem into working code, not fixing it. Remember that you should remove the related test functions and keep test scripts pass.

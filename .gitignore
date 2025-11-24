@@ -197,6 +197,7 @@ cython_debug/
 generated/
 projects/
 runtime/
+private/
 
 # Local Scripts
 propose.sh

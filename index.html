@@ -1,0 +1,924 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SWE-Playground</title>
+    
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <style>
+        :root {
+            --primary-dark: #1a1a2e;
+            --text-color: #333;
+            --text-light: #666;
+            --bg-color: #ffffff;
+            
+            /* Vivid Palette */
+            --gradient-start: #4e54c8;
+            --gradient-end: #8f94fb;
+            --accent-blue: #2980b9;
+            --accent-green: #27ae60;
+            --accent-purple: #8e44ad;
+            
+            /* Card Colors */
+            --card-bg: #ffffff;
+            --shadow: 0 10px 30px rgba(0,0,0,0.08);
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            color: var(--text-color);
+            line-height: 1.7;
+            margin: 0;
+            padding: 0;
+            background-color: #fdfdfd;
+        }
+
+        h1, h2, h3 {
+            font-weight: 800;
+            margin-top: 0;
+        }
+
+        a { text-decoration: none; transition: all 0.3s ease; }
+
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 0 1.5rem;
+        }
+
+        /* HERO SECTION */
+        .hero {
+            background: linear-gradient(135deg, var(--gradient-start), var(--gradient-end));
+            color: white;
+            padding: 4rem 1rem 6rem; /* Added bottom padding for the buttons */
+            text-align: center;
+            clip-path: polygon(0 0, 100% 0, 100% 95%, 0 100%);
+            margin-bottom: 2rem;
+        }
+
+        .title {
+            font-size: 3rem;
+            line-height: 1.1;
+            margin-bottom: 1.5rem;
+            text-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        .authors {
+            font-size: 1.2rem;
+            margin-bottom: 1rem;
+            font-weight: 500;
+        }
+
+        .author-name {
+            margin: 0 10px;
+            display: inline-block;
+        }
+
+        /* UPDATED: specific styling for author links to keep them white */
+        .author-name a {
+            color: rgba(255, 255, 255, 0.95);
+            text-decoration: none;
+            transition: opacity 0.2s ease;
+        }
+
+        .author-name a:hover {
+            opacity: 0.7;
+            text-decoration: underline;
+        }
+
+        .affiliations {
+            font-size: 1rem;
+            color: rgba(255, 255, 255, 0.8);
+            margin-bottom: 2rem;
+        }
+
+        /* ACTION BUTTONS (Now inside Hero) */
+        .action-bar {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            flex-wrap: wrap;
+            margin-top: 2rem;
+        }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            padding: 0.8rem 1.5rem;
+            border-radius: 50px;
+            color: white;
+            font-weight: 600;
+            font-size: 1rem;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+            border: 1px solid rgba(255,255,255,0.1);
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        .btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(0,0,0,0.3);
+        }
+
+        /* Icon sizing and alignment */
+        .btn i, .btn svg { 
+            margin-right: 10px; 
+            font-size: 1.1em;
+        }
+        
+        .btn svg { 
+            height: 1.4em; 
+            width: 1.4em; 
+            fill: currentColor; 
+            margin-bottom: -2px; /* Visual alignment fix for SVG */
+        }
+
+        /* Specific Button Colors */
+        .btn-paper { 
+            background-color: #B31B1B; /* arXiv Red */
+        } 
+        
+        .btn-code { 
+            background-color: #24292e; /* Github Black */
+        } 
+        
+        .btn-data { 
+            background-color: #FFD21E; /* Hugging Face Yellow */
+            color: #333; /* Dark text for contrast */
+        }
+
+        /* CONTENT SECTIONS */
+        .section {
+            margin-bottom: 4rem;
+        }
+
+        .section-title {
+            font-size: 2rem;
+            text-align: center;
+            margin-bottom: 2rem;
+            color: var(--primary-dark);
+            position: relative;
+            display: inline-block;
+            left: 50%;
+            transform: translateX(-50%);
+        }
+        
+        .section-title::after {
+            content: '';
+            display: block;
+            width: 60px;
+            height: 4px;
+            background: var(--gradient-start);
+            margin: 10px auto 0;
+            border-radius: 2px;
+        }
+
+        .abstract-box {
+            background: white;
+            padding: 2rem;
+            border-radius: 16px;
+            box-shadow: var(--shadow);
+            border-left: 5px solid var(--gradient-start);
+            text-align: justify;
+        }
+
+        /* FIGURES */
+        .figure-container {
+            background: white;
+            padding: 1rem;
+            border-radius: 12px;
+            box-shadow: var(--shadow);
+            margin: 2rem 0;
+            text-align: center;
+            overflow: hidden;
+        }
+
+        .figure-img {
+            max-width: 100%;
+            height: auto;
+            border-radius: 8px;
+        }
+
+        .caption {
+            margin-top: 1rem;
+            font-size: 0.95rem;
+            color: var(--text-light);
+            text-align: left;
+            padding: 0 1rem;
+        }
+
+        /* PIPELINE CARDS */
+        .pipeline-steps {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 1.5rem;
+        }
+
+        .step-card {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 12px;
+            width: calc(33.33% - 1.5rem);
+            min-width: 280px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+            transition: transform 0.3s ease;
+            border-top: 5px solid #ddd;
+        }
+
+        .step-card:hover {
+            transform: translateY(-5px);
+        }
+
+        /* Individual Card Colors */
+        .step-1 { border-color: var(--accent-blue); }
+        .step-2 { border-color: var(--accent-purple); }
+        .step-3 { border-color: var(--accent-green); }
+
+        .step-icon {
+            font-size: 2rem;
+            margin-bottom: 1rem;
+            display: block;
+        }
+        .step-1 .step-icon { color: var(--accent-blue); }
+        .step-2 .step-icon { color: var(--accent-purple); }
+        .step-3 .step-icon { color: var(--accent-green); }
+
+        .step-title {
+            font-size: 1.2rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+            color: var(--primary-dark);
+        }
+
+        /* RESULTS SECTION STYLING */
+        .results-highlight {
+            background: linear-gradient(to bottom right, #f3f4ff, #ffffff);
+            border-radius: 16px;
+            padding: 2.5rem;
+            border: 1px solid #e0e6ed;
+        }
+
+        .key-point {
+            display: flex;
+            align-items: flex-start;
+            margin-bottom: 1rem;
+        }
+
+        .key-point i {
+            color: var(--accent-green);
+            margin-right: 12px;
+            margin-top: 6px;
+            font-size: 1.2rem;
+        }
+
+        /* CITATION */
+        .bibtex-container {
+            background-color: #282c34;
+            color: #abb2bf;
+            padding: 1.5rem;
+            border-radius: 12px;
+            overflow-x: auto;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.85rem;
+            box-shadow: inset 0 0 20px rgba(0,0,0,0.3);
+        }
+
+        /* FOOTER */
+        footer {
+            text-align: center;
+            padding: 3rem;
+            background: #f8f9fa;
+            margin-top: 4rem;
+            border-top: 1px solid #eaeaea;
+            color: #888;
+        }
+
+        @media (max-width: 768px) {
+            .title { font-size: 2rem; }
+            .step-card { width: 100%; }
+            .hero { clip-path: polygon(0 0, 100% 0, 100% 95%, 0 100%); }
+        }
+    </style>
+</head>
+<body>
+
+    <header class="hero">
+        <div class="container">
+            <h1 class="title">Training Versatile Coding Agents in<br>Synthetic Environments</h1>
+            
+            <div class="authors">
+                <span class="author-name">
+                    <a href="https://zhu-yiqi.github.io">Yiqi Zhu</a><sup>1</sup>
+                </span>
+                <span class="author-name">
+                    <a href="https://apga.github.io">Apurva Gandhi</a><sup>2</sup>
+                </span>
+                <span class="author-name">
+                    <a href="https://www.phontron.com">Graham Neubig</a><sup>2</sup>
+                </span>
+            </div>
+
+            <div class="affiliations">
+                <sup>1</sup>Tsinghua University <sup>2</sup>Carnegie Mellon University
+            </div>
+
+            <div class="action-bar">
+                <a href="#" class="btn btn-paper">
+                    <i class="fas fa-file-pdf"></i> Paper [Coming Soon]
+                </a>
+                
+                <a href="https://github.com/neulab/SWE-Playground" class="btn btn-code">
+                    <i class="fab fa-github"></i> Code
+                </a>
+                
+                <a href="https://huggingface.co/collections/StephenZhu/swe-playground" class="btn btn-data">
+                    🤗  Data & Models
+                </a>
+            </div>
+        </div>
+    </header>
+
+    <div class="container">
+        
+        <div class="figure-container">
+            <img src="/assets/result.png" 
+                 alt="SWE-Playground Overview" class="figure-img">
+            <p class="caption">
+                <strong>Overview</strong> of our SWE-Playground against previous methods on diverse coding benchmarks. We report resolved rate on SWE-bench Verified, resolved rate and coverage delta on SWT-Bench Lite and resolved rate on Commit-0 Lite. As the results indicate, though our model falls slightly short on SWE-bench Verified (using substantially fewer training trajectories against R2E-Gym and SWE-smith), it outperforms all baselines on the other benchmarks and metrics, demonstrating that our proposed SWE-Playground is capable of training versatile coding agents. 
+            </p>
+        </div>
+
+        <section class="section">
+            <h2 class="section-title">Abstract</h2>
+            <div class="abstract-box">
+                <p>
+                    Prior works on training software engineering agents have explored utilizing existing resources such as issues on GitHub repositories. However, these approaches face limitations: reliance on static repositories limits flexibility, and a focus on issue resolution restricts versatile skill learning.
+                </p>
+                <p>
+                    To overcome these challenges, we introduce SWE-Playground, a novel data generation pipeline designed to support the training of more versatile coding agents. Unlike prior efforts, SWE-Playground synthetically generates projects and tasks from scratch with strong language models and agents, eliminating reliance on external data sources. This allows us to tackle a much wider variety of coding tasks, such as reproducing issues by generating unit tests and implementing libraries from scratch. Results indicate that SWE-Playground is highly data efficient, enabling agents to reach comparable performance with significantly fewer trajectories than previous work.
+                </p>
+            </div>
+        </section>
+
+        <section class="section">
+            <h2 class="section-title">How It Works</h2>
+            
+            <style>
+                /* Row Layout Containers */
+                .pipeline-row {
+                    display: flex;
+                    justify-content: center;
+                    gap: 2rem;
+                    margin-bottom: 2rem;
+                    flex-wrap: wrap;
+                }
+
+                /* Individual Step Card Styling */
+                .p-step {
+                    background: white;
+                    padding: 1.5rem;
+                    border-radius: 12px;
+                    flex: 1;
+                    min-width: 250px; /* Ensures cards don't get too squashed */
+                    max-width: 350px; /* Prevents them from getting too wide on large screens */
+                    box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+                    border-top: 4px solid #ccc;
+                    text-align: left;
+                    position: relative;
+                }
+
+                .p-step h4 { margin: 0 0 0.5rem 0; font-size: 1.1rem; color: var(--primary-dark); font-weight: 700; }
+                .p-step p { font-size: 0.85rem; line-height: 1.6; margin: 0; color: var(--text-light); }
+                .p-step i { font-size: 1.5rem; margin-bottom: 1rem; display: block; }
+
+                /* Step Colors */
+                .ps-1 { border-color: #4e54c8; } .ps-1 i { color: #4e54c8; }
+                .ps-2 { border-color: #2980b9; } .ps-2 i { color: #2980b9; }
+                .ps-3 { border-color: #27ae60; } .ps-3 i { color: #27ae60; }
+                .ps-4 { border-color: #f39c12; } .ps-4 i { color: #f39c12; }
+                .ps-5 { border-color: #8e44ad; } .ps-5 i { color: #8e44ad; }
+
+                /* Adaptive Blocks Styling */
+                .adapt-block {
+                    flex: 1;
+                    min-width: 250px;
+                    background: #f8f9fa;
+                    padding: 1.5rem;
+                    border-radius: 12px;
+                    border: 1px solid #e0e6ed;
+                }
+                .adapt-block h4 { margin-top: 0; color: var(--primary-dark); display: flex; align-items: center; gap: 10px; }
+                .adapt-block p { font-size: 0.9rem; margin-bottom: 0; color: #555; }
+            </style>
+
+            <h3 style="text-align: center; margin-bottom: 2rem; font-size: 1.5rem;">Main Data Generation Pipeline</h3>
+            
+            <div class="pipeline-row">
+                <div class="p-step ps-1">
+                    <i class="fas fa-file-alt"></i>
+                    <h4>1. Project Proposal</h4>
+                    <p>An LLM generates a comprehensive proposal outlining scope, objectives, and constraints (e.g., specific domains or languages) to ensure diversity.</p>
+                </div>
+
+                <div class="p-step ps-2">
+                    <i class="fas fa-tasks"></i>
+                    <h4>2. Task Proposal</h4>
+                    <p>The project is decomposed into step-by-step tasks. A <strong>detailed checklist</strong> is generated, explicitly specifying the requisite unit tests for each task.</p>
+                </div>
+
+                <div class="p-step ps-3">
+                    <i class="fas fa-folder-open"></i>
+                    <h4>3. Repository Setup</h4>
+                    <p>An agent establishes the foundational code structure, file paths, and environment (Docker/dependencies) without implementing core functionality.</p>
+                </div>
+            </div>
+
+            <div class="pipeline-row">
+                <div class="p-step ps-4">
+                    <i class="fas fa-vial"></i>
+                    <h4>4. Unit Test Generation</h4>
+                    <p>An <strong>active agent</strong> generates strict unit tests based on the checklist. It executes the tests to verify imports and validity <em>before</em> implementation begins.</p>
+                </div>
+
+                <div class="p-step ps-5">
+                    <i class="fas fa-laptop-code"></i>
+                    <h4>5. Functionality Implementation</h4>
+                    <p>An agent implements functionality using the tests as a guide (TDD). A <strong>mutual verification loop</strong> ensures correctness before the final trajectory is saved.</p>
+                </div>
+            </div>
+
+            <div class="figure-container">
+                <img src="/assets/pipeline-1.png" 
+                     alt="Pipeline-1" class="figure-img">
+            </div>
+
+            <h3 style="text-align: center; margin: 3rem 0 2rem 0; font-size: 1.5rem;">Task Specific Generation</h3>
+            
+            <div class="pipeline-row">
+                <div class="adapt-block">
+                    <h4><i class="fas fa-bug" style="color: #d63031;"></i> Issue Resolution</h4>
+                    <p>
+                        <strong>Simulating SWE-bench:</strong> Based on the fully functional repository generated by our pipeline, we use an agent to inject a specific bug. The existing test suite is used to verify the bug injection.
+                    </p>
+                </div>
+
+                <div class="adapt-block">
+                    <h4><i class="fas fa-flask" style="color: #e67e22;"></i> Issue Reproduction</h4>
+                    <p>
+                        <strong>Simulating SWT-Bench:</strong> We inject a bug but hide it from the test suite. The agent is tasked with writing a new test script that successfully exposes the faulty behavior, rather than fixing the code itself.
+                    </p>
+                </div>
+
+                <div class="adapt-block">
+                    <h4><i class="fas fa-layer-group" style="color: #0984e3;"></i> Library Generation</h4>
+                    <p>
+                        <strong>Simulating Commit-0:</strong> We take a completed repository and replace all function bodies with <code>pass</code> statements. The agent must re-implement the entire library from scratch, using the structure as a reference.
+                    </p>
+                </div>
+
+                <div class="figure-container">
+                    <img src="/assets/pipeline-2.png" 
+                         alt="Pipeline-2" class="figure-img">
+                </div>
+
+            </div>
+            
+        </section>
+
+        <section class="section">
+            <h2 class="section-title">Versatile Performance</h2>
+            
+            <style>
+                .table-wrapper {
+                    background: white;
+                    border-radius: 12px;
+                    box-shadow: var(--shadow);
+                    margin-bottom: 1.5rem;
+                    border: 1px solid #eee;
+                    width: 100%;
+                }
+
+                .perf-table {
+                    width: 100%;
+                    border-collapse: collapse;
+                    font-family: 'Inter', sans-serif;
+                    font-size: 0.9rem;
+                }
+
+                .perf-table thead th {
+                    background-color: #f8f9fa;
+                    color: var(--primary-dark);
+                    font-weight: 700;
+                    padding: 12px 10px;
+                    border-bottom: 2px solid #e0e6ed;
+                    text-align: center;
+                }
+                
+                .perf-table thead th:first-child {
+                    text-align: left;
+                    padding-left: 20px;
+                }
+
+                .perf-table td {
+                    padding: 12px 10px;
+                    border-bottom: 1px solid #f0f0f0;
+                    text-align: center;
+                    color: var(--text-color);
+                }
+                
+                .perf-table td:first-child {
+                    text-align: left;
+                    font-weight: 500;
+                    padding-left: 20px;
+                }
+
+                /* UPDATED: Centered Group Headers */
+                .group-header {
+                    background-color: #EFEFEF;
+                    color: #666;
+                    font-style: italic;
+                    font-size: 0.85rem;
+                    text-align: center !important; /* Centered here */
+                    padding: 8px 0 !important;
+                    font-weight: 600;
+                }
+
+                .highlight-row {
+                    background-color: #f0f9ff;
+                    font-weight: 700;
+                }
+                .highlight-row td:first-child {
+                    color: var(--accent-blue);
+                }
+
+                /* Monospace font for strict alignment */
+                .val {
+                    font-family: 'JetBrains Mono', monospace;
+                    white-space: nowrap; 
+                }
+                
+                .delta {
+                    font-size: 0.8em;
+                    margin-left: 4px;
+                    font-family: 'JetBrains Mono', monospace;
+                }
+                
+                /* Phantom class: Invisible but takes up exact width */
+                .phantom {
+                    visibility: hidden;
+                    opacity: 0;
+                    user-select: none;
+                }
+                
+                .d-pos { color: #27ae60; }
+                .d-neg { color: #c0392b; }
+                .d-neu { color: #95a5a6; }
+
+                .table-caption {
+                    font-size: 0.9rem;
+                    color: var(--text-light);
+                    text-align: center;
+                    margin-top: 1rem;
+                    line-height: 1.5;
+                }
+            </style>
+
+            <div class="table-wrapper">
+                <table class="perf-table">
+                    <thead>
+                        <tr>
+                            <th rowspan="2">Models</th>
+                            <th rowspan="2">Dataset Size</th>
+                            <th colspan="2">SWE-bench Verified</th>
+                            <th colspan="2">SWT-Bench</th>
+                            <th>Commit-0</th>
+                        </tr>
+                        <tr>
+                            <th style="font-size: 0.85rem;">Resolved Rate ↑</th>
+                            <th style="font-size: 0.85rem;">Empty Patch Rate ↓</th>
+                            <th style="font-size: 0.85rem;">Resolved Rate ↑</th>
+                            <th style="font-size: 0.85rem;">Coverage Delta ↑</th>
+                            <th style="font-size: 0.85rem;">Resolved Rate ↑</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td colspan="7" class="group-header">7B Models</td>
+                        </tr>
+                        <tr>
+                            <td>Qwen2.5-Coder-7B</td>
+                            <td class="val">-</td>
+                            <td class="val"><span class="phantom">0</span>1.8 <span class="delta phantom">(+<span class="phantom">0</span>0.0)</span></td>
+                            <td class="val">45.8 <span class="delta phantom">(-<span class="phantom">0</span>0.0)</span></td>
+                            <td class="val"><span class="phantom">0</span>0.72 <span class="delta phantom">(+0.00)</span></td>
+                            <td class="val"><span class="phantom">0</span>7.55 <span class="delta phantom">(+<span class="phantom">0</span>0.00)</span></td>
+                            <td class="val"><span class="phantom">0</span>5.21 <span class="delta phantom">(+0.00)</span></td>
+                        </tr>
+                        <tr>
+                            <td>SWE-Gym-7B</td>
+                            <td class="val">491</td>
+                            <td class="val">10.6 <span class="delta d-pos">(+<span class="phantom">0</span>8.8)</span></td>
+                            <td class="val">33.8 <span class="delta d-pos">(-12.0)</span></td>
+                            <td class="val"><span class="phantom">0</span>1.45 <span class="delta d-pos">(+0.73)</span></td>
+                            <td class="val"><span class="phantom">0</span>5.19 <span class="delta d-neg">(-<span class="phantom">0</span>2.36)</span></td>
+                            <td class="val"><span class="phantom">0</span>7.19 <span class="delta d-pos">(+1.98)</span></td>
+                        </tr>
+                        <tr>
+                            <td>R2E-Gym-7B</td>
+                            <td class="val">3.3k</td>
+                            <td class="val">19.0 <span class="delta d-pos">(+17.2)</span></td>
+                            <td class="val">--</td>
+                            <td class="val"><span class="phantom">0</span>0.72 <span class="delta d-neu">(<span class="phantom">+</span>0.00)</span></td>
+                            <td class="val"><span class="phantom">0</span>2.66 <span class="delta d-neg">(-<span class="phantom">0</span>4.89)</span></td>
+                            <td class="val"><span class="phantom">0</span>7.28 <span class="delta d-pos">(+2.07)</span></td>
+                        </tr>
+                        <tr>
+                            <td>SWE-smith-7B</td>
+                            <td class="val">2.0k</td>
+                            <td class="val">15.2 <span class="delta d-pos">(+13.4)</span></td>
+                            <td class="val">--</td>
+                            <td class="val"><span class="phantom">0</span>0.00 <span class="delta d-neg">(-0.72)</span></td>
+                            <td class="val">12.30 <span class="delta d-pos">(+<span class="phantom">0</span>4.75)</span></td>
+                            <td class="val"><span class="phantom">0</span>7.50 <span class="delta d-pos">(+2.29)</span></td>
+                        </tr>
+                        <tr class="highlight-row">
+                            <td>SWE-Play-mix-7B</td>
+                            <td class="val">704</td>
+                            <td class="val">17.0 <span class="delta d-pos">(+15.2)</span></td>
+                            <td class="val"><span class="phantom">0</span>6.4 <span class="delta d-pos">(-39.4)</span></td>
+                            <td class="val"><span class="phantom">0</span>4.48 <span class="delta d-pos">(+3.76)</span></td>
+                            <td class="val">24.15 <span class="delta d-pos">(+16.60)</span></td>
+                            <td class="val"><span class="phantom">0</span>8.46 <span class="delta d-pos">(+3.25)</span></td>
+                        </tr>
+
+                        <tr>
+                            <td colspan="7" class="group-header">32B Models</td>
+                        </tr>
+                        <tr>
+                            <td>Qwen2.5-Coder-32B</td>
+                            <td class="val">-</td>
+                            <td class="val"><span class="phantom">0</span>7.0 <span class="delta phantom">(+<span class="phantom">0</span>0.0)</span></td>
+                            <td class="val"><span class="phantom">0</span>9.5 <span class="delta phantom">(+<span class="phantom">0</span>0.0)</span></td>
+                            <td class="val"><span class="phantom">0</span>9.42 <span class="delta phantom">(+<span class="phantom">0</span>0.00)</span></td>
+                            <td class="val">24.81 <span class="delta phantom">(+<span class="phantom">0</span>0.00)</span></td>
+                            <td class="val"><span class="phantom">0</span>6.62 <span class="delta phantom">(+0.00)</span></td>
+                        </tr>
+                        <tr>
+                            <td>SWE-Gym-32B</td>
+                            <td class="val">491</td>
+                            <td class="val">20.6 <span class="delta d-pos">(+13.6)</span></td>
+                            <td class="val">13.8 <span class="delta d-neg">(+<span class="phantom">0</span>4.3)</span></td>
+                            <td class="val"><span class="phantom">0</span>3.26 <span class="delta d-neg">(-<span class="phantom">0</span>6.16)</span></td>
+                            <td class="val">10.34 <span class="delta d-neg">(-14.47)</span></td>
+                            <td class="val"><span class="phantom">0</span>7.19 <span class="delta d-pos">(+0.57)</span></td>
+                        </tr>
+                        <tr>
+                            <td>R2E-Gym-32B</td>
+                            <td class="val">3.3k</td>
+                            <td class="val">34.4 <span class="delta d-pos">(+27.4)</span></td>
+                            <td class="val">--</td>
+                            <td class="val"><span class="phantom">0</span>3.26 <span class="delta d-neg">(-<span class="phantom">0</span>6.16)</span></td>
+                            <td class="val">15.04 <span class="delta d-neg">(-<span class="phantom">0</span>9.77)</span></td>
+                            <td class="val"><span class="phantom">0</span>9.45 <span class="delta d-pos">(+2.83)</span></td>
+                        </tr>
+                        <tr>
+                            <td>SWE-smith-32B</td>
+                            <td class="val">5.0k</td>
+                            <td class="val">40.2 <span class="delta d-pos">(+33.2)</span></td>
+                            <td class="val">--</td>
+                            <td class="val">13.77 <span class="delta d-pos">(+<span class="phantom">0</span>4.35)</span></td>
+                            <td class="val">42.15 <span class="delta d-pos">(+17.34)</span></td>
+                            <td class="val"><span class="phantom">0</span>7.50 <span class="delta d-pos">(+0.88)</span></td>
+                        </tr>
+                        <tr class="highlight-row">
+                            <td>SWE-Play-mix-32B</td>
+                            <td class="val">704</td>
+                            <td class="val">31.2 <span class="delta d-pos">(+24.2)</span></td>
+                            <td class="val"><span class="phantom">0</span>6.8 <span class="delta d-pos">(-<span class="phantom">0</span>2.7)</span></td>
+                            <td class="val">18.12 <span class="delta d-pos">(+<span class="phantom">0</span>8.70)</span></td>
+                            <td class="val">44.24 <span class="delta d-pos">(+19.43)</span></td>
+                            <td class="val">10.42 <span class="delta d-pos">(+3.80)</span></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <p class="table-caption">
+                Performance comparison of our SWE-Play-mix against the base model and baselines. 
+                Values in parentheses represent the delta relative to the base model (Qwen2.5-Coder). 
+                Improvements are highlighted in <span style="color:#27ae60; font-weight:bold;">green</span>, 
+                and degradation in <span style="color:#c0392b; font-weight:bold;">red</span>.
+            </p>
+
+            <div class="results-highlight" style="margin-top: 2rem;">
+                <h3>Key Findings</h3>
+                <div class="key-point">
+                    <i class="fas fa-check-circle"></i>
+                    <div>
+                        <strong>Versatility Across Benchmarks:</strong> Our agents outperform baselines on <strong>SWT-Bench</strong> (Issue Reproduction) and <strong>Commit-0</strong> (Library Generation from Scratch), while maintaining competitive performance on SWE-bench.
+                    </div>
+                </div>
+                <div class="key-point">
+                    <i class="fas fa-check-circle"></i>
+                    <div>
+                        <strong>Superior Data Efficiency:</strong> Using only <strong>704 trajectories</strong>, our SWE-Play-mix model rivals baselines like R2E-Gym and SWE-smith which use over 2,000 trajectories.
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="section">
+            <h2 class="section-title">Discussions</h2>
+
+            <div class="table-wrapper">
+                <table class="perf-table">
+                    <thead>
+                        <tr>
+                            <th rowspan="2">Models</th>
+                            <th colspan="2">SWE-bench Verified</th>
+                            <th colspan="2">SWT-Bench</th>
+                            <th>Commit-0</th>
+                        </tr>
+                        <tr>
+                            <th style="font-size: 0.85rem;">Resolved Rate</th>
+                            <th style="font-size: 0.85rem;">Empty Patch Rate</th>
+                            <th style="font-size: 0.85rem;">Resolved Rate</th>
+                            <th style="font-size: 0.85rem;">Coverage Delta</th>
+                            <th style="font-size: 0.85rem;">Resolved Rate</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Qwen2.5-Coder</td>
+                            <td class="val"><span class="phantom">0</span>1.8</td>
+                            <td class="val">45.8</td>
+                            <td class="val">0.72</td>
+                            <td class="val"><span class="phantom">0</span>7.55</td>
+                            <td class="val">5.21</td>
+                        </tr>
+                        <tr>
+                            <td>SWE-Play-mix</td>
+                            <td class="val">17.0</td>
+                            <td class="val"><span class="phantom">0</span>6.4</td>
+                            <td class="val">4.48</td>
+                            <td class="val">24.15</td>
+                            <td class="val">8.46</td>
+                        </tr>
+                        <tr>
+                            <td>SWE-Play-general</td>
+                            <td class="val"><span class="phantom">0</span>8.6</td>
+                            <td class="val">22.6</td>
+                            <td class="val">2.54</td>
+                            <td class="val"><span class="phantom">0</span>7.55</td>
+                            <td class="val">7.50</td>
+                        </tr>
+                        <tr>
+                            <td>SWE-Play-swe</td>
+                            <td class="val">11.0</td>
+                            <td class="val">10.6</td>
+                            <td class="val">0.72</td>
+                            <td class="val"><span class="phantom">0</span>4.80</td>
+                            <td class="val">6.81</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <p class="caption" style="text-align:center; margin-bottom: 3rem;">
+                Performance comparison of different SWE-Play 7B models on all evaluated benchmarks.
+            </p>
+
+            <h3 style="text-align: center; margin-bottom: 1.5rem; font-size: 1.5rem;">Impact of Trajectory Composition</h3>
+            
+            <p>
+                To investigate how different trajectory types influence model performance, we conduct an ablation study by training two additional 7B models: <strong>SWE-Play-general</strong> (280 general-purpose trajectories) and <strong>SWE-Play-swe</strong> (213 SWE-bench specific trajectories).
+            </p>
+            <p>
+                Results indicate that training solely on general trajectories yields performance gains on three of the four metrics. The only exception is a nearly identical coverage delta on SWT-Bench. This demonstrates that generalist training effectively develops core coding abilities. We attribute this to the intrinsic design of the SWE-Playground pipeline: models build projects from blank templates (analogous to Commit-0) and naturally resolve bugs during implementation (analogous to SWE-bench). Furthermore, explicitly prompting the model to write test scripts empowers it with unit test generation skills.
+            </p>
+
+            <h3 style="text-align: center; margin: 4rem 0 1.5rem 0; font-size: 1.5rem;">Investigation into Data Efficiency</h3>
+
+            <div class="figure-container">
+                <img src="./assets/scaling.png" 
+                         alt="Scaling" class="figure-img" style="border: 1px solid #eee;">
+                <p class="caption">
+                    Training time scaling trends of SWE-Gym and the projected trend of SWE-Playground. 
+                    Our projection suggests that our model could achieve nearly 45% resolved rate with equivalent data volume.
+                </p>
+            </div>
+
+            <p>
+                Our model demonstrates remarkable data efficiency. <strong>SWE-Play-mix</strong> is only outperformed by R2E-Gym on SWE-bench Verified, despite R2E-Gym using a dataset nearly five times larger (3,321 vs 704). Furthermore, our SWE-Play-swe-7B surpasses SWE-Gym-7B while using less than half the volume of training trajectories.
+            </p>
+            <p>
+                To understand this efficiency, we analyzed the trajectory statistics (Table 4). Our trajectories contain <strong>2-3x more tokens and messages</strong> on average compared to baselines. We characterize this as higher <em>learning density</em>—trajectories dense with diverse and complex actions provide a more potent learning impetus per sample. Additionally, the significantly higher proportion of bash execution actions (41.7%) indicates that our agents learn a robust, iterative development methodology.
+            </p>
+
+            <div class="table-wrapper">
+                <table class="perf-table">
+                    <thead>
+                        <tr>
+                            <th>Metric</th>
+                            <th>SWE-Gym</th>
+                            <th>R2E-Gym</th>
+                            <th>SWE-Play-mix</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Total Count</td>
+                            <td class="val">491</td>
+                            <td class="val">3.3k</td>
+                            <td class="val">704</td>
+                        </tr>
+                        <tr>
+                            <td>Message</td>
+                            <td class="val">40.2</td>
+                            <td class="val">33.2</td>
+                            <td class="val">72.9</td>
+                        </tr>
+                        <tr>
+                            <td>Token</td>
+                            <td class="val">18377</td>
+                            <td class="val">13795</td>
+                            <td class="val">39121</td>
+                        </tr>
+                        <tr>
+                            <td>Assist Token</td>
+                            <td class="val">2595</td>
+                            <td class="val">2604</td>
+                            <td class="val">7308</td>
+                        </tr>
+                        <tr>
+                            <td>Tool Call</td>
+                            <td class="val">17.9</td>
+                            <td class="val">16.1</td>
+                            <td class="val">36.0</td>
+                        </tr>
+                        <tr>
+                            <td>Lines Edited</td>
+                            <td class="val">17.5</td>
+                            <td class="val">38.6</td>
+                            <td class="val">103.5</td>
+                        </tr>
+                        <tr>
+                            <td>Bash Proportion</td>
+                            <td class="val">27.8%</td>
+                            <td class="val">26.7%</td>
+                            <td class="val">41.7%</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <p class="caption" style="text-align:center;">
+                Trajectory statistics comparing dataset density. SWE-Play-mix trajectories are significantly richer in tokens, tool calls, and code edits.
+            </p>
+
+        </section>
+
+        <section class="section">
+            <h2 class="section-title">Future Work</h2>
+            
+            <div style="display: flex; flex-wrap: wrap; gap: 2rem; justify-content: center; margin-top: 2rem;">
+                
+                <div style="flex: 1; min-width: 300px; background: white; padding: 2rem; border-radius: 12px; box-shadow: 0 5px 15px rgba(0,0,0,0.05); border-top: 4px solid #4e54c8;">
+                    <h3 style="margin-top: 0; margin-bottom: 1rem; display: flex; align-items: center; gap: 12px; color: var(--primary-dark);">
+                        <i class="fas fa-expand-arrows-alt" style="color: #4e54c8;"></i> 
+                        Broader Coding Capaiblities
+                    </h3>
+                    <p style="font-size: 0.95rem; color: #555; line-height: 1.6;">
+                        Incorporating a broader range of coding capabilities and benchmarks, such as <strong>SWE-bench Multimodal</strong> and <strong>SWE-perf</strong>, would further validate the extensibility of our framework. The features inherent to such benchmarks are highly compatible with the generative capabilities of our pipeline, enabling the testing of diverse software engineering skills.
+                    </p>
+                </div>
+
+                <div style="flex: 1; min-width: 300px; background: white; padding: 2rem; border-radius: 12px; box-shadow: 0 5px 15px rgba(0,0,0,0.05); border-top: 4px solid #8e44ad;">
+                    <h3 style="margin-top: 0; margin-bottom: 1rem; display: flex; align-items: center; gap: 12px; color: var(--primary-dark);">
+                        <i class="fas fa-brain" style="color: #8e44ad;"></i> 
+                        Reinforcement Learning
+                    </h3>
+                    <p style="font-size: 0.95rem; color: #555; line-height: 1.6;">
+                        Conducting Reinforcement Learning (RL) experiments is a critical next step. Our pipeline creates a scenario where <strong>unit test generation and code implementation mutually verify each other</strong>. Training an agent to master both skills through Reinforcement Learning will allow us to explore the potential for developing self-verifying and self-improving coding agents.
+                    </p>
+                </div>
+
+            </div>
+        </section>
+
+        <section class="section">
+            <h2 class="section-title">Citation</h2>
+            <div class="bibtex-container">
+
+            </div>
+        </section>
+
+    </div>
+
+    <footer>
+        <p>&copy; 2025 SWE-Playground. All rights reserved.</p>
+    </footer>
+
+</body>
+</html>
