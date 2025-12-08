@@ -1,4 +1,4 @@
-<h1 align="center"> Training Versatile Coding Agents in Synthetic Environments </h1>
+<h1 align="center"> Training Versatile Coding Agents in<br>Synthetic Environments </h1>
 
 <p align="center">
   <a href="https://zhu-yiqi.github.io" style="text-decoration: none;">Yiqi Zhu<sup>1</sup></a>, 
