@@ -1,0 +1,623 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="description" content="SWE-Playground: Training Versatile Coding Agents in Synthetic Environments">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>SWE-Playground</title>
+
+    <link href="https://fonts.googleapis.com/css?family=Google+Sans|Noto+Sans|Castoro" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <style>
+        :root {
+            --accent-color: #209cee; /* Academic Blue */
+            --text-color: #2c3e50;
+            --bg-color: #ffffff;
+            --max-width: 900px;
+        }
+
+        body {
+            font-family: 'Noto Sans', sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            line-height: 1.6;
+            margin: 0;
+            padding: 0;
+        }
+
+        h1, h2, h3, h4 {
+            font-family: 'Google Sans', sans-serif;
+            font-weight: 600;
+            color: #000;
+        }
+
+        .paper-title { 
+            font-size: 3rem; 
+            line-height: 1.1; 
+            margin-bottom: 1.5rem; 
+            margin-top: 2rem;
+        }
+
+        h2 { 
+            font-size: 1.75rem; 
+            border-bottom: 1px solid #eee; 
+            padding-bottom: 10px; 
+            margin-top: 5rem; 
+            margin-bottom: 2rem;
+            text-align: center;
+        }
+        
+        h3 { font-size: 1.3rem; margin-top: 2.5rem; color: #444; }
+        h4 { font-size: 1.1rem; margin-top: 1.5rem; color: #555; }
+
+        a { color: var(--accent-color); text-decoration: none; }
+        a:hover { text-decoration: underline; }
+
+        .container {
+            max-width: var(--max-width);
+            margin: 0 auto;
+            padding: 2rem 1rem;
+        }
+
+        /* HERO SECTION */
+        .hero { text-align: center; margin-bottom: 4rem; }
+        
+        .authors { font-size: 1.2rem; margin-bottom: 0.5rem; }
+        .author-block { display: inline-block; margin-right: 15px; }
+        .affiliations { font-size: 1rem; color: #666; margin-bottom: 2rem; }
+        
+        /* BUTTONS */
+        .link-block { display: flex; justify-content: center; gap: 10px; margin-top: 25px; flex-wrap: wrap; }
+        .external-link {
+            background-color: #363636;
+            color: #fff;
+            padding: 12px 24px;
+            border-radius: 30px;
+            font-size: 1rem;
+            transition: opacity 0.3s;
+            display: inline-flex;
+            align-items: center;
+        }
+        .external-link:hover { opacity: 0.8; text-decoration: none; color: white; }
+        .external-link i { margin-right: 8px; }
+
+        /* ABSTRACT */
+        .abstract-container {
+            background-color: #f5f5f5;
+            padding: 2.5rem;
+            border-radius: 10px;
+            margin-bottom: 3rem;
+        }
+        .abstract-text { text-align: justify; font-size: 1.05rem; margin-bottom: 0; }
+        .abstract-text p { margin-bottom: 1rem; }
+        .abstract-text p:last-child { margin-bottom: 0; }
+
+        /* FIGURES */
+        .figure-block { text-align: center; margin: 3rem 0; }
+        .figure-img { max-width: 100%; height: auto; border-radius: 5px; border: 1px solid #eee; }
+        
+        .caption { 
+            font-size: 0.95rem; 
+            color: #555; 
+            margin-top: 12px; 
+            text-align: center;
+            font-family: 'Castoro', serif;
+            max-width: 800px;
+            margin-left: auto;
+            margin-right: auto;
+            line-height: 1.4;
+        }
+
+        /* SIMPLE BOX (Replacing pure text list) */
+        .simple-box {
+            background-color: #fcfcfc;
+            border: 1px solid #e0e0e0;
+            border-radius: 8px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            max-width: 800px;
+            margin-left: auto;
+            margin-right: auto;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.02);
+        }
+        .simple-box p { margin-bottom: 1.5rem; font-size: 1.05rem; }
+        .simple-box p:last-child { margin-bottom: 0; }
+
+        /* ACADEMIC TABLES */
+        .table-wrapper { 
+            overflow-x: auto; 
+            margin: 3rem 0; 
+            display: flex; 
+            justify-content: center;
+            flex-direction: column;
+        }
+        
+        table { 
+            border-collapse: collapse; 
+            width: 100%; 
+            font-size: 0.85rem; 
+            font-family: 'Google Sans', sans-serif;
+            margin: 0 auto;
+        }
+        
+        th, td { padding: 10px 12px; text-align: center; vertical-align: middle; }
+        
+        /* Table Lines */
+        thead tr:first-child th { border-top: 2px solid #000; }
+        thead tr:last-child th { border-bottom: 1px solid #000; }
+        tbody tr:last-child td { border-bottom: 2px solid #000; }
+        
+        .row-header { text-align: left; font-weight: normal; padding-left: 10px; }
+        .group-header { background-color: #fafafa; font-weight: bold; text-align: center; color: #555; font-style: italic;}
+        
+        /* Metrics formatting */
+        .delta { font-size: 0.75em; margin-left: 4px; white-space: nowrap; font-family: monospace;}
+        .pos { color: #27ae60; font-weight: bold; }
+        .neg { color: #c0392b; font-weight: bold; }
+        .neu { color: #95a5a6; }
+        .best { background-color: #e8f6f3; font-weight: 700; }
+        .best td:first-child { color: #2980b9; }
+
+        /* HIGHLIGHT BOX */
+        .highlight-box {
+            background-color: #f8f9fa;
+            border-left: 4px solid var(--accent-color);
+            padding: 2rem;
+            border-radius: 4px;
+            margin: 4rem 0;
+        }
+        .highlight-item { display: flex; gap: 15px; margin-bottom: 1.5rem; }
+        .highlight-item:last-child { margin-bottom: 0; }
+        .highlight-item i { color: #27ae60; margin-top: 5px; font-size: 1.2rem; }
+        .highlight-item div { font-size: 1.05rem; }
+
+        /* FUTURE WORK CARDS */
+        .fw-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin-top: 2rem;
+        }
+        .fw-card {
+            background: #fff;
+            border: 1px solid #e0e0e0;
+            border-radius: 8px;
+            padding: 1.5rem;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+        }
+        .fw-card h4 { margin-top: 0; display: flex; align-items: center; gap: 10px; }
+
+        /* CITATION */
+        .bibtex {
+            background-color: #f5f5f5;
+            padding: 20px;
+            border-radius: 5px;
+            font-family: monospace;
+            font-size: 0.8rem;
+            overflow-x: auto;
+            white-space: pre;
+            border: 1px solid #ddd;
+            margin-top: 2rem;
+        }
+
+        footer { text-align: center; padding: 3rem; color: #999; font-size: 0.9rem; border-top: 1px solid #eee; margin-top: 5rem;}
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        
+        <div class="hero">
+            <h1 class="paper-title">Training Versatile Coding Agents in<br>Synthetic Environments</h1>
+            
+            <div class="authors">
+                <div class="author-block">
+                    <a href="https://zhu-yiqi.github.io">Yiqi Zhu</a><sup>1</sup>
+                </div>
+                <div class="author-block">
+                    <a href="https://apga.github.io">Apurva Gandhi</a><sup>2</sup>
+                </div>
+                <div class="author-block">
+                    <a href="https://www.phontron.com">Graham Neubig</a><sup>2</sup>
+                </div>
+            </div>
+
+            <div class="affiliations">
+                <span><sup>1</sup>Tsinghua University</span>&nbsp;&nbsp;&nbsp;
+                <span><sup>2</sup>Carnegie Mellon University</span>
+            </div>
+
+            <div class="link-block">
+                <a href="#" class="external-link">
+                    <i class="fas fa-file-pdf"></i> Paper [Coming Soon]
+                </a>
+                <a href="https://github.com/neulab/SWE-Playground" class="external-link">
+                    <i class="fab fa-github"></i> Code
+                </a>
+                <a href="https://huggingface.co/collections/StephenZhu/swe-playground" class="external-link">
+                    <i class="fas fa-database"></i> Data & Models
+                </a>
+            </div>
+        </div>
+
+        <div class="figure-block">
+            <img src="./assets/result.png" alt="SWE-Playground Overview Results" class="figure-img">
+            <p class="caption">
+                <strong>Figure 1: Overview.</strong> Comparison of our SWE-Playground against previous methods on diverse coding benchmarks. As the results indicate, though our model falls slightly short on SWE-bench Verified (using substantially fewer training trajectories against R2E-Gym and SWE-smith), it outperforms all baselines on the other benchmarks and metrics, demonstrating that our proposed SWE-Playground is capable of training versatile coding agents.
+            </p>
+        </div>
+
+        <div class="abstract-container">
+            <h2 style="margin-top: 0; text-align: center; border: none; font-size: 1.5rem;">Abstract</h2>
+            <div class="abstract-text">
+                <p>
+                    Prior works on training software engineering agents have explored utilizing existing resources such as issues on GitHub repositories to construct software engineering tasks and corresponding test suites. These approaches face key limitations: their reliance on static repositories limits flexibility, and their primary focus on issue resolution restricts the learning of versatile skills required for real-world engineering, such as reproducing issues or building libraries.
+                </p>
+                <p>
+                    To overcome these challenges, we introduce <strong>SWE-Playground</strong>, a novel pipeline for generating environments and trajectories which supports the training of versatile coding agents. Unlike prior efforts, SWE-Playground synthetically generates projects and tasks from scratch with strong language models and agents, eliminating reliance on external data sources. This allows us to tackle a much wider variety of coding tasks. We demonstrate the effectiveness of this approach on three distinct benchmarks, and results indicate that SWE-Playground is highly data efficient, enabling agents to reach comparable performance with significantly fewer trajectories than previous works.
+                </p>
+            </div>
+        </div>
+
+        <h2>How It Works</h2>
+        
+        <h3 style="text-align: center;">Main Data Generation Pipeline</h3>
+        <p style="text-align: center; color: #666; margin-bottom: 2rem;">
+            Our fully automated pipeline constructs software engineering environments from scratch.
+        </p>
+
+        <div class="figure-block">
+            <img src="./assets/pipeline-1.png" alt="Pipeline Step 1" class="figure-img">
+            <p class="caption">
+                <strong>Figure 2: The Generation Pipeline.</strong> From proposal to validated code. (1) Project Proposal; (2) Task Decomposition; (3) Repository Setup; (4) Unit Test Generation; (5) Implementation and Mutual Verification.
+            </p>
+        </div>
+
+        <div class="simple-box">
+            <p><strong>1. Project Proposal:</strong> An LLM generates a comprehensive proposal steered by strict constraints—such as CLI-based interaction, high algorithmic density, and the exclusion of simple CRUD applications—to ensure diversity and complexity.</p>
+            
+            <p><strong>2. Task Proposal:</strong> The project is decomposed hierarchically into phases, modules, and executable tasks. A detailed checklist explicitly specifies requisite unit tests, standard cases, and assertions to serve as a reliable reward signal.</p>
+            
+            <p><strong>3. Repository Setup:</strong> An agent establishes the foundational code structure, delineating necessary files, utilities, function stubs, and Docker environments without implementing core logic, preventing disorganized development.</p>
+            
+            <p><strong>4. Unit Test Generation:</strong> An <strong>active agent</strong> (OpenHands) generates strict unit tests based on the checklist. It executes its own tests to verify imports and dependencies, ensuring that tests are functionally valid before implementation begins.</p>
+            
+            <p><strong>5. Implementation:</strong> A model implements the functionality using the generated unit tests as a guide. This forms a <strong>mutual verification loop</strong>: an issue in either the test or the implementation leads to failure, adding robustness to the process. To prevent reward hacking, the final verification uses the original, unmodified test suite.</p>
+        </div>
+
+        <h3 style="text-align: center;">Task Specific Generation</h3>
+        <p style="text-align: center; color: #666; margin-bottom: 2rem;">
+            We adapt the pipeline to simulate three distinct coding benchmarks, demonstrating extensibility.
+        </p>
+        
+        <div class="figure-block">
+            <img src="./assets/pipeline-2.png" alt="Pipeline Step 2" class="figure-img">
+            <p class="caption">
+                <strong>Figure 3: Task Adaptation.</strong> Adapting the synthetic environment for issue resolution (SWE-bench), issue reproduction (SWT-Bench), and library generation from scratch (Commit-0).
+            </p>
+        </div>
+
+        <div class="simple-box">
+            <p><strong>Issue Resolution (SWE-bench):</strong> We inject specific bugs into the functional repository using an agent. The existing test suites directly verify the correctness of the fix, where a failing test serves as the success signal for the injection.</p>
+            
+            <p><strong>Issue Reproduction (SWT-Bench):</strong> Beyond injecting a bug, we require the agent to modify the test suites to hide the bug. The training agent must then write a <em>new</em> test script to expose the faulty behavior, effectively reproducing the issue.</p>
+            
+            <p><strong>Library Generation from Scratch (Commit-0):</strong> We simulate building a library from scratch by replacing all function bodies in the generated repository with <code>pass</code> statements. The agent attempts the full task, providing trajectories for pure distillation.</p>
+        </div>
+
+        <h2>Versatile Performance</h2>
+        <p style="text-align: center; max-width: 800px; margin: 0 auto 2rem auto;">
+            We compare our model against Qwen2.5-Coder (Base), SWE-Gym, R2E-Gym, and SWE-smith. While prior methods focus heavily on SWE-bench, our results highlight the importance of versatility.
+            <br>
+            <span style="font-size: 0.85rem; color: #666;">
+                Values in parentheses represent the delta relative to the base model.
+            </span>
+        </p>
+
+        <div class="table-wrapper">
+            <table>
+                <thead>
+                    <tr>
+                        <th rowspan="2" class="row-header">Model</th>
+                        <th rowspan="2">Data Size</th>
+                        <th colspan="2">SWE-bench Verified</th>
+                        <th colspan="2">SWT-Bench</th>
+                        <th>Commit-0</th>
+                    </tr>
+                    <tr>
+                        <th style="font-size: 0.8rem;">Resolved %</th>
+                        <th style="font-size: 0.8rem;">Empty Patch %</th>
+                        <th style="font-size: 0.8rem;">Resolved %</th>
+                        <th style="font-size: 0.8rem;">Cov Delta</th>
+                        <th style="font-size: 0.8rem;">Resolved %</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr><td colspan="7" class="group-header">7B Models</td></tr>
+                    <tr>
+                        <td class="row-header">Qwen2.5-Coder-7B</td>
+                        <td>-</td>
+                        <td>1.8</td>
+                        <td>45.8</td>
+                        <td>0.72</td>
+                        <td>7.55</td>
+                        <td>5.21</td>
+                    </tr>
+                    <tr>
+                        <td class="row-header">SWE-Gym-7B</td>
+                        <td>491</td>
+                        <td>10.6 <span class="delta pos">(+8.8)</span></td>
+                        <td>33.8 <span class="delta pos">(-12.0)</span></td>
+                        <td>1.45 <span class="delta pos">(+0.73)</span></td>
+                        <td>5.19 <span class="delta neg">(-2.36)</span></td>
+                        <td>7.19 <span class="delta pos">(+1.98)</span></td>
+                    </tr>
+                    <tr>
+                        <td class="row-header">R2E-Gym-7B</td>
+                        <td>3.3k</td>
+                        <td>19.0 <span class="delta pos">(+17.2)</span></td>
+                        <td>--</td>
+                        <td>0.72 <span class="delta neu">(+0.0)</span></td>
+                        <td>2.66 <span class="delta neg">(-4.89)</span></td>
+                        <td>7.28 <span class="delta pos">(+2.07)</span></td>
+                    </tr>
+                    <tr>
+                        <td class="row-header">SWE-smith-7B</td>
+                        <td>2.0k</td>
+                        <td>15.2 <span class="delta pos">(+13.4)</span></td>
+                        <td>--</td>
+                        <td>0.00 <span class="delta neg">(-0.72)</span></td>
+                        <td>12.30 <span class="delta pos">(+4.75)</span></td>
+                        <td>7.50 <span class="delta pos">(+2.29)</span></td>
+                    </tr>
+                    <tr class="best">
+                        <td class="row-header">SWE-Play-mix-7B</td>
+                        <td>704</td>
+                        <td>17.0 <span class="delta pos">(+15.2)</span></td>
+                        <td>6.4 <span class="delta pos">(-39.4)</span></td>
+                        <td>4.48 <span class="delta pos">(+3.76)</span></td>
+                        <td>24.15 <span class="delta pos">(+16.6)</span></td>
+                        <td>8.46 <span class="delta pos">(+3.25)</span></td>
+                    </tr>
+
+                    <tr><td colspan="7" class="group-header">32B Models</td></tr>
+                    <tr>
+                        <td class="row-header">Qwen2.5-Coder-32B</td>
+                        <td>-</td>
+                        <td>7.0</td>
+                        <td>9.5</td>
+                        <td>9.42</td>
+                        <td>24.81</td>
+                        <td>6.62</td>
+                    </tr>
+                    <tr>
+                        <td class="row-header">SWE-Gym-32B</td>
+                        <td>491</td>
+                        <td>20.6 <span class="delta pos">(+13.6)</span></td>
+                        <td>13.8 <span class="delta neg">(+4.3)</span></td>
+                        <td>3.26 <span class="delta neg">(-6.16)</span></td>
+                        <td>10.34 <span class="delta neg">(-14.5)</span></td>
+                        <td>7.19 <span class="delta pos">(+0.57)</span></td>
+                    </tr>
+                    <tr>
+                        <td class="row-header">R2E-Gym-32B</td>
+                        <td>3.3k</td>
+                        <td>34.4 <span class="delta pos">(+27.4)</span></td>
+                        <td>--</td>
+                        <td>3.26 <span class="delta neg">(-6.16)</span></td>
+                        <td>15.04 <span class="delta neg">(-9.77)</span></td>
+                        <td>9.45 <span class="delta pos">(+2.83)</span></td>
+                    </tr>
+                    <tr>
+                        <td class="row-header">SWE-smith-32B</td>
+                        <td>5.0k</td>
+                        <td>40.2 <span class="delta pos">(+33.2)</span></td>
+                        <td>--</td>
+                        <td>13.77 <span class="delta pos">(+4.35)</span></td>
+                        <td>42.15 <span class="delta pos">(+17.3)</span></td>
+                        <td>7.50 <span class="delta pos">(+0.88)</span></td>
+                    </tr>
+                    <tr class="best">
+                        <td class="row-header">SWE-Play-mix-32B</td>
+                        <td>704</td>
+                        <td>31.2 <span class="delta pos">(+24.2)</span></td>
+                        <td>6.8 <span class="delta pos">(-2.7)</span></td>
+                        <td>18.12 <span class="delta pos">(+8.70)</span></td>
+                        <td>44.24 <span class="delta pos">(+19.4)</span></td>
+                        <td>10.42 <span class="delta pos">(+3.80)</span></td>
+                    </tr>
+                </tbody>
+            </table>
+            <p class="caption">
+                <strong>Table 1: Main Results.</strong> Performance comparison of our SWE-Play-mix against baselines.
+            </p>
+        </div>
+
+        <div class="highlight-box">
+            <h3>Key Findings</h3>
+            <div class="highlight-item">
+                <i class="fas fa-check-circle"></i>
+                <div>
+                    <strong>Strong Performance Across Benchmarks:</strong> SWE-Play-mix consistently surpasses base models on diverse coding benchmarks. It secures top performance on 4/5 metrics for 7B models and achieves similar gains for 32B models, despite using a significantly smaller dataset.
+                </div>
+            </div>
+            <div class="highlight-item">
+                <i class="fas fa-check-circle"></i>
+                <div>
+                    <strong>Limited Generalization of Baselines:</strong> Agents trained on prior environments (SWE-Gym, R2E-Gym, SWE-smith) often fail to generalize. While they perform competitively on SWE-bench, they show limited or degraded performance on SWT-Bench (Issue Reproduction) and Commit-0 (Library Generation).
+                </div>
+            </div>
+            <div class="highlight-item">
+                <i class="fas fa-check-circle"></i>
+                <div>
+                    <strong>Inconsistent Scaling:</strong> 7B and 32B models exhibit distinct behaviors. For instance, while prior methods might slightly help 7B models on SWT-Bench, they actively degrade the performance of 32B models, suggesting that these methods may hurt the capabilities of larger models on complex tasks such as issue reproduction.
+                </div>
+            </div>
+        </div>
+
+        <h2>Discussions</h2>
+
+        <h3>Impact of Trajectory Composition</h3>
+        <p>
+            To investigate how different trajectory types influence model performance, we conducted an ablation study with two additional 7B models: <strong>SWE-Play-general</strong> (with 280 general-purpose trajectories) and <strong>SWE-Play-swe</strong> (with 213 issue resolution trajectories).
+        </p>
+
+        <div class="table-wrapper">
+            <table style="max-width: 800px;">
+                <thead>
+                    <tr>
+                        <th rowspan="2" class="row-header">Models</th>
+                        <th colspan="2">SWE-bench Verified</th>
+                        <th colspan="2">SWT-Bench</th>
+                        <th>Commit-0</th>
+                    </tr>
+                    <tr>
+                        <th>Resolved</th>
+                        <th>Empty</th>
+                        <th>Resolved</th>
+                        <th>Cov Delta</th>
+                        <th>Resolved</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td class="row-header">Qwen2.5-Coder</td>
+                        <td>1.8</td>
+                        <td>45.8</td>
+                        <td>0.72</td>
+                        <td>7.55</td>
+                        <td>5.21</td>
+                    </tr>
+                    <tr class="best">
+                        <td class="row-header">SWE-Play-mix</td>
+                        <td>17.0</td>
+                        <td>6.4</td>
+                        <td>4.48</td>
+                        <td>24.15</td>
+                        <td>8.46</td>
+                    </tr>
+                    <tr>
+                        <td class="row-header">SWE-Play-general</td>
+                        <td>8.6</td>
+                        <td>22.6</td>
+                        <td>2.54</td>
+                        <td>7.55</td>
+                        <td>7.50</td>
+                    </tr>
+                    <tr>
+                        <td class="row-header">SWE-Play-swe</td>
+                        <td>11.0</td>
+                        <td>10.6</td>
+                        <td>0.72</td>
+                        <td>4.80</td>
+                        <td>6.81</td>
+                    </tr>
+                </tbody>
+            </table>
+            <p class="caption">
+                <strong>Table 2: Ablation Study.</strong> Performance of different trajectory compositions.
+            </p>
+        </div>
+
+        <p>
+            Results indicate that generalist training effectively develops core coding abilities. We attribute this to the intrinsic design of the SWE-Playground pipeline: models build projects from blank templates (similar to Commit-0) and naturally resolve bugs during implementation. The mixture of all trajectory types (SWE-Play-mix) yields the highest performance, confirming the effectiveness of cross-scenario transferability.
+        </p>
+
+        <h3>Investigation into Data Efficiency</h3>
+        
+        <div style="display: flex; flex-wrap: wrap; gap: 3rem; align-items: flex-start; margin-top: 2rem;">
+            <div style="flex: 1; min-width: 300px;">
+                 <img src="./assets/scaling.png" alt="Scaling Efficiency" class="figure-img">
+                 <p class="caption">
+                    <strong>Figure 4: Scaling Trends.</strong> Comparison of training time scaling. Our projection suggests SWE-Playground could achieve nearly 45% resolved rate with equivalent data volume to baselines.
+                 </p>
+            </div>
+            <div style="flex: 1; min-width: 300px;">
+                <p style="margin-top: 0;">
+                    Our model demonstrates remarkable data efficiency. <strong>SWE-Play-mix</strong> is only outperformed by R2E-Gym on SWE-bench Verified, despite R2E-Gym using a dataset nearly five times larger.
+                </p>
+                <p>
+                    As shown in Table 3, our trajectories contain <strong>2-3x more tokens and messages</strong> on average. We characterize this as higher <strong>learning density</strong>. The significantly higher proportion of bash execution actions (41.7%) indicates that our agents learn a robust development methodology based on execution and iterative verification, rather than simple code generation.
+                </p>
+            </div>
+        </div>
+
+        <div class="table-wrapper">
+            <table style="max-width: 600px;">
+                <thead>
+                    <tr>
+                        <th class="row-header">Metric</th>
+                        <th>SWE-Gym</th>
+                        <th>R2E-Gym</th>
+                        <th>SWE-Play-mix</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td class="row-header">Total Count</td>
+                        <td>491</td>
+                        <td>3.3k</td>
+                        <td>704</td>
+                    </tr>
+                    <tr>
+                        <td class="row-header">Message Count</td>
+                        <td>40.2</td>
+                        <td>33.2</td>
+                        <td><strong>72.9</strong></td>
+                    </tr>
+                    <tr>
+                        <td class="row-header">Token Count</td>
+                        <td>18,377</td>
+                        <td>13,795</td>
+                        <td><strong>39,121</strong></td>
+                    </tr>
+                    <tr>
+                        <td class="row-header">Lines Edited</td>
+                        <td>17.5</td>
+                        <td>38.6</td>
+                        <td><strong>103.5</strong></td>
+                    </tr>
+                    <tr>
+                        <td class="row-header">Bash Proportion</td>
+                        <td>27.8%</td>
+                        <td>26.7%</td>
+                        <td><strong>41.7%</strong></td>
+                    </tr>
+                </tbody>
+            </table>
+            <p class="caption">
+                <strong>Table 3: Trajectory Statistics.</strong> Comparison of dataset density.
+            </p>
+        </div>
+
+        <h2>Future Work</h2>
+        
+        <div class="fw-grid">
+            <div class="fw-card">
+                <h4><i class="fas fa-expand-arrows-alt" style="color: var(--accent-color);"></i> Broader Coding Capabilities</h4>
+                <p>
+                    Incorporating a broader range of coding capabilities and benchmarks, such as <strong>SWE-bench Multimodal</strong> and <strong>SWE-perf</strong>, would further validate the extensibility of our framework.
+                </p>
+            </div>
+
+            <div class="fw-card">
+                <h4><i class="fas fa-brain" style="color: #8e44ad;"></i> Reinforcement Learning</h4>
+                <p>
+                    Our pipeline creates a scenario where <strong>unit test generation and code implementation mutually verify each other</strong>. Training an agent to master both skills through RL will allow us to explore self-verifying and self-improving coding agents.
+                </p>
+            </div>
+        </div>
+
+        <h2>Citation</h2>
+        <div class="bibtex">
+        </div>
+
+    </div>
+
+    <footer>
+        <p>&copy; 2025 SWE-Playground. All rights reserved.</p>
+    </footer>
+
+</body>
+</html>

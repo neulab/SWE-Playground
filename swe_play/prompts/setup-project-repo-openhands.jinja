@@ -1,0 +1,45 @@
+{% include "common-project-prefix-system.jinja" %}
+We are currently in the middle of the proposal stage. Particularly, a project proposer has already proposed a project idea and the tasks for this project has also been proposed in `tasks.md`.
+
+**Project Description:** {{ project_description }}
+
+Notice here are some constraints for the project: {{ constraints }}
+
+Now, it is your job to do the following:
+
+1. Set up the basic repository structure for the project.
+
+Create the initial project structure with the following components:
+
+- **Project Configuration Files**: Set up appropriate configuration files based on the project type:
+  - For Python projects: requirements.txt, setup.py, or pyproject.toml
+  - For C++ projects: CMakeLists.txt, Makefile, or similar
+  - For Rust projects: Cargo.toml
+
+- **Directory Structure**: Create the basic folder structure:
+  - `src/` or `app/` for source code
+  - `tests/` for test files
+  - `docs/` for documentation
+  - `assets/` for static resources (images, data files, etc.)
+
+- **Initial Source Files**: Create placeholder files to establish the project structure:
+  - Main entry point (main.py, main.cpp, etc.)
+  - Basic module structure
+  - Initial test files
+
+The repository should be immediately buildable and runnable, but you should not implement any anythings involved as tasks in `task.md`, which means your implemented setup must not pass any unit test.
+
+You may create some directories and files, but do not write substantial content into them. The setup should only include the minimal structure needed to support the implementation of tasks.
+
+Also, unit tests should not be setup in this stage.
+
+Notice that if you would like to initialize some classes and their functions, you should raise a `NotImplementedError` in each method body and do not provide any actual implementation, instead of simply leave a "pass".
+
+2. Prepare Docker setup for the project.
+
+- Modify `Dockerfile` and any other necessary files (such as `.dockerignore`) to enable containerized development of the project.
+- Ensure the Docker setup installs all required build tools and dependencies for the project to compile and run, and most importantly for further development.
+- The Docker container must be persistent for further development. Do not modify `CMD ["tail", "-f", "/dev/null"]` is Dockerfile.
+- For Python setup, you should create a new conda environment instead of directly installing all the packages. Therefore, use miniconda and environment.yml for setting up.
+
+A template Dockerfile tailored to the project's programming language has been provided in the repository. Please review and update this Dockerfile as needed to ensure it fully supports the specific requirements and dependencies of your project.

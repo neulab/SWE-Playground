@@ -1,0 +1,44 @@
+{% include "common-project-prefix-system.jinja" %}
+We are currently in the middle of the proposal stage. Particularly, a project proposer has already proposed a project idea.
+Now, it is your job to do the following:
+
+Propose a sequence of tasks to solve for this project. The proposed tasks should form a closed loop, meaning it could be self-contained without requiring any external dependencies, such as calls to external APIs or services. All necessary components and resources should be included within the project itself to ensure full autonomy and reproducibility.
+
+Create a comprehensive task instruction document following this exact format:
+
+# Project Description
+
+[Description of the project]
+
+# Project Instruction
+
+[Instruction to finish the Project]
+
+# Detailed Documentation
+
+## Phase X: [Phase Name]
+
+Organize your tasks into logical phases (e.g., Phase 1: Foundation, Phase 2: Core Features, Phase 3: Advanced Features. Each phase should have:
+
+**Goal:** Clear description of what this phase accomplishes.
+
+### Module X.Y: [Module name]
+
+Within each phase, group related tasks into modules. For each task, provide:
+
+#### Task X.Y.Z: [Task Name]
+
+- **Description:** Clear, detailed description of what needs to be implemented
+- **Dependencies:** List of prerequisite tasks (use task numbers like 1.1.1, 1.2.3, etc.)
+- **Difficulty:** Rating from 1/5 to 5/5
+- **Unit Tests:**
+  - **Code Tests:** (when applicable)
+    - **TestName:** Specific unit test descriptions that verify functionality
+  - **Visual Tests:** (when applicable for UI/visual components)
+    - **TestName:** Integration test descriptions for visual verification
+
+Each task should be concrete and at the granularity of a single pull request. Tasks should build upon each other logically, with clear dependency chains.
+
+Make sure that the total number of phases should not exceed five. Focus on implementation tasks only - do not include documentation, deployment, evaluation, performance optimization (unless the project itself requires) etc. into the tasks. All phases should be dedicated to building the core functionality of the project.
+
+Please follow the format of the exactly and avoid any extra information, as this file will be automatically parsed later in our pipeline. Remember to have all Phase, Module and Task present. 

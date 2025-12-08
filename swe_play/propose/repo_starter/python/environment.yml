@@ -1,0 +1,24 @@
+# environment.yml
+
+# Name for the Conda environment
+name: my-python-env
+
+# Channels to search for packages. conda-forge is highly recommended.
+channels:
+  - conda-forge
+  - defaults
+
+# List of dependencies to install
+dependencies:
+  # Development tools
+  - pip
+
+  # Specify the Python version
+  - python=3.12
+
+  # For showcase, need modification
+  - numpy
+
+  # For showcase, need modification
+  - pip:
+    - pytest

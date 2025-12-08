@@ -1,0 +1,50 @@
+{% include "common-project-prefix-system.jinja" %}
+We are currently in the final of the proposal stage. Particularly, a project proposer has already proposed a project idea to tackle, and the documentation for the project has already been set up.
+
+**Task:** {{ project_task }}
+
+Now, it is your job to create unit tests for the project based on the documentation:
+
+For each Task X.Y.Z, a list of unit tests are contained in the documentation. Unit tests are put into two categories: Code Tests and Visual Tests.
+
+For Code Tests, you need to write the actual unit test code that verifies the functionality described in the test description. These should be proper unit tests with assertions that check specific behaviors, inputs, and outputs.
+
+For Visual Tests, you need to create simple test programs that call multimodal agents to provide visual verification of UI components, rendering outputs, and user interface behaviors that cannot be easily tested through code assertions alone.
+
+Please create unit test files for each task that has unit tests defined in the documentation. Organize the tests logically and ensure they cover all the test cases mentioned in the task descriptions.
+
+The unit tests should be written in the appropriate language for the project and follow standard testing conventions and frameworks.
+
+Along with the unit tests functions you have written, a bash script `tests/X.Y.Z.sh` is needed. All unit tests will be finally executed via this bash script. Each bash script should:
+
+1. Set up the necessary environment (compile the project if needed)
+2. Run the specific unit tests for that task
+3. Handle both code tests and visual tests appropriately
+4. Provide clear output indicating test results (pass/fail)
+5. Exit with appropriate status codes (0 for success, non-zero for failure)
+
+For visual tests, the bash script should run the programs that invoke a multimodal agent to perform visual verification of the test outputs.
+
+The scripts will be executed under root directory via `bash ./tests/1.1.1.sh`, and this bash script should run `./tests/test_1_1_1.py` via pytest, which implements the unit test logic. So you should ensure that the scripts can be run in this way.
+
+You do not need to install packages for unit tests. Also, if the tests run into cases such as Import Error or Not Implemented Error, you should treat it as a failure case instead of skipping it.
+
+All Tasks should be covered by unit tests except those marked with N/A. You do not need to care about whether your unit tests need to import the implemented modules. You just need to be responsible for implementing unit tests, and the implementation of functions will be based on your unit tests. You shall not leave TODOs in unit tests.
+
+We are generating unit tests task by task, and currently you need to implement:
+
+{{ unit_test_prompt }}
+
+Only work on generating code for this unit test and do not care about others and no documentation for unit tests is needed. You MUST NOT implement code except for unit tests.
+
+Please note that your task is to generate unit tests that can verify the correctness of the code that others will implement. You should not make your unit tests pass with the current code implementation.
+You should also NEVER expect the raise of NotImplementedError in unit tests as this will encourage the behavior of leaving functions unfinished.
+
+You should ensure the tests you implement correctly verify all the functions for different projects:
+- **Mathematical tools**: Unit tests should ensure numerical accuracy, handle edge cases like division by zero, infinity, and NaN values, test mathematical properties and invariants, and validate algorithm correctness across different input ranges
+- **Language processors**: Unit tests should verify parsing accuracy, tokenization correctness, syntax validation, error handling for malformed input, and proper handling of different language constructs and edge cases
+- **Complex data structures**: Database engines, distributed data structures should be tested for data integrity, concurrent access safety, performance characteristics, memory management, and correctness of complex operations like joins, transactions, and consistency guarantees
+- **Advanced parsers**: Unit tests should validate parsing of complex grammars, error recovery mechanisms, abstract syntax tree generation, semantic analysis correctness, and handling of ambiguous or malformed input
+- **Network protocols**: Unit tests should verify message serialization/deserialization, protocol state management, error handling for network failures, timeout behaviors, and compliance with protocol specifications
+- **Optimization systems**: Unit tests should test convergence properties, objective function evaluation, constraint satisfaction, performance benchmarks, and correctness of optimization algorithms across various problem instances
+Make sure that the functionality is thoroughly tested, rather than simply verifying that the output format matches expectations.

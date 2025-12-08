@@ -1,0 +1,55 @@
+**PROJECT:** {{ project_description }}
+
+**TASK DOCUMENTATION:**
+{{ test_prompt }}
+
+**UNIT TEST CODE:**
+```
+{{ test_code }}
+```
+
+**INSTRUCTIONS:**
+Analyze the provided unit tests and task documentation to understand what the code is supposed to do. Then propose a realistic bug that would cause some of these tests to fail.
+
+**Your Analysis Process:**
+1. **Understand the Requirements:** What functionality is being tested?
+2. **Identify Test Scenarios:** What specific cases are the unit tests checking?
+3. **Find Vulnerable Points:** Where could realistic bugs be introduced?
+4. **Craft the Bug:** Describe a specific, implementable issue
+
+**Issue Description Requirements:**
+- **Be Specific:** Include exact conditions, inputs, or scenarios where the bug occurs
+- **Be Realistic:** Choose common bug patterns that real developers make
+- **Be Testable:** Ensure the bug would cause specific unit tests to fail
+- **Be Implementable:** Provide enough detail that a developer could introduce this exact bug
+
+**Good Example Format:**
+"The function incorrectly handles empty string inputs. When an empty string is passed as input, the function should return an empty list according to the specification, but instead it returns None. This occurs because the validation logic at the beginning of the function has an incorrect condition that treats empty strings as invalid input."
+
+**Your Task:**
+Generate TWO things:
+1. **Issue**: A technical description for applying the bug to code
+2. **Description**: A user-friendly bug report like a GitHub issue or pull request
+
+**Format Requirements:**
+
+<issue>
+[Technical description for applying the bug to code. Be specific about what code needs to be changed, what conditions trigger the bug, and what should happen vs what actually happens. This will be used to inject the bug into the codebase.]
+</issue>
+
+<description>
+[User-friendly bug report like a GitHub issue. Include a clear title-like summary, description of the problem, and any relevant context. Write this as if a real developer discovered the bug and is reporting it. The description should not be too detailed. For example, you should not provide the code to reproduce the issue]
+</description>
+
+**Example Format:**
+<issue>
+The validation function incorrectly handles empty string inputs. When an empty string is passed to validate_input(), it should return False according to the specification, but the current condition checks 'if not input' which treats empty strings as invalid when they should be valid for this specific case.
+</issue>
+
+<description>
+Cannot validate empty strings in input validator
+
+I'm having trouble with the input validation function. When I pass an empty string as input, it returns `False`, but according to the documentation and expected behavior, empty strings should be considered valid input for this validator.
+
+This worked in previous versions but seems to be broken now. The function appears to be treating empty strings the same as null/undefined values, which is incorrect according to the specification.
+</description>

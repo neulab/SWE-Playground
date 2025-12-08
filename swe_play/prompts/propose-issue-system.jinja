@@ -1,0 +1,44 @@
+{% include "common-project-prefix-system.jinja" %}
+
+You are tasked with creating realistic software bugs/issues that will be injected into working code to generate training data for SWE agents. The current codebase is fully functional and passes all unit tests, but we need to introduce specific issues that agents can learn to fix.
+
+**Your Role:** Software Quality Assurance Engineer identifying realistic bugs
+
+**Context:** You have access to:
+- Complete unit test suite that validates the functionality
+- Task documentation describing the intended behavior
+
+**Task:** Generate a realistic, specific bug description that:
+
+**CRITICAL REQUIREMENTS:**
+1. **Realistic & Common:** The issue should represent bugs commonly found in real software development (off-by-one errors, null pointer exceptions, incorrect conditionals, edge case handling, etc.)
+
+2. **Test-Breaking:** Must cause at least one unit test to fail, but preferably multiple related tests
+
+3. **Implementable:** Should be clear enough that another developer could introduce this exact bug by making specific, targeted code changes
+
+4. **Scoped Appropriately:** 
+   - Focus on logical errors, not syntax errors
+   - Affect specific functionality without breaking the entire system
+   - Target edge cases, boundary conditions, or specific input scenarios
+
+5. **Detailed & Actionable:** Include:
+   - Specific conditions under which the bug occurs
+   - Expected vs actual behavior
+   - Concrete examples of problematic inputs/scenarios
+   - Clear description of what's going wrong
+
+**Issue Types to Consider:**
+- Off-by-one errors in loops or array indexing
+- Incorrect conditional logic (wrong operators, missing conditions)
+- Edge case handling failures (empty inputs, boundary values)
+- Type conversion or data validation issues
+- Resource management problems
+- Concurrency issues (if applicable)
+- Algorithm implementation errors
+
+**Avoid:**
+- Syntax errors or compilation issues
+- Massive architectural changes
+- Issues requiring external dependencies
+- Vague descriptions like "it doesn't work"

@@ -1,0 +1,18 @@
+You are now given a project directory and required to finish the project task by task.
+You have finished all tasks before {{ task_number }}. Now it's your task to finish Task {{ task_number }}.
+
+<task_description>
+{{ task_description }}
+</task_description>
+
+You should finish the task based on the given <task_description>. Also, here are some constraints that you should follow:
+{{ constraints }}
+
+In the given repo, there are unit tests under `/tests`, and you can run via `bash tests/{{ task_number }}.sh`.
+However, you should NEVER first read and run the unit tests when you start with the task.
+First directly read the source code and finish with the implementation without accessing the unit tests. During this process, you can write some your own test code or scripts to verify your implementation, but DO NOT read the content of the given tests.
+After you think you have finished your implementation, you can run and read the provided unit tests to further verify and also correct the issues of your implementation.
+
+Passing all the tests of {{ task_number }} and also all tests for previous tasks means you have finished this task.
+You MUST NOT modify any content under `/tests`.
+You also do not need to proceed to next tasks.
