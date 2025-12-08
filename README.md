@@ -20,7 +20,7 @@
 
 ---
 
-We present <strong>SWE-Playground</strong>, <strong>a fully automated pipeline</strong> that synthesizes tasks and verifiable unit tests from scratch for <strong>training versatile coding agents</strong>. We identify that previous environments for training SWE agents typically rely on pre-existing GitHub repositories and focus predominantly on issue resolution tasks. SWE-Playground is designed to address these limitations by proposing tasks from scratch, <strong>offering flexibility and extensibility when constructing training instances</strong>, and <strong>supporting training versatile coding agents that benefit mutually from various types of trajectories</strong>.
+We present <strong>SWE-Playground</strong>, a fully automated pipeline that synthesizes tasks and verifiable unit tests from scratch for training versatile coding agents. We identify that previous environments for training SWE agents typically rely on pre-existing GitHub repositories and focus predominantly on issue resolution tasks. SWE-Playground is designed to address these limitations by proposing tasks from scratch, offering flexibility and extensibility when constructing training instances, and supporting training versatile coding agents that benefit mutually from various types of trajectories.
 
 <div align="center">
   <img src="./assets/result.png" alt="Result" width="100%">
