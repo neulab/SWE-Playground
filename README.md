@@ -2,7 +2,7 @@
 
 <p align="center">
   <a href="https://zhu-yiqi.github.io" style="text-decoration: none;">Yiqi Zhu<sup>1</sup></a>, 
-  <a href="https://apga.github.io" style="text-decoration: none;">Apruva Gandhi<sup>2</sup></a>,
+  <a href="https://apga.github.io" style="text-decoration: none;">Apurva Gandhi<sup>2</sup></a>,
   <a href="https://www.phontron.com" style="text-decoration: none;">Graham Neubig<sup>2</sup></a>
 </p>
 
