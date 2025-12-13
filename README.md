@@ -15,7 +15,7 @@
 •
 <a href="https://huggingface.co/collections/StephenZhu/swe-playground" >🤗 Data & Models</a>
 •
-<a href="" >🌐 Project Page</a>
+<a href="https://neulab.github.io/SWE-Playground/" >🌐 Project Page</a>
 </p>
 
 ---
@@ -40,7 +40,7 @@ SWE-Playground pipeline starts with an LLM proposing a project, which is then de
 
 ---
 
-Results demonstrate that SWE-Playground trains agents to achieve strong performance across various benchmarks using a significantly smaller dataset, and trajectories across different tasks mutually enhance performance on a single benchmark. Further analysis substantiates the high data efficiency of our approach, with scaling trends suggesting the potential for even greater performance gains as resources increase.
+Results demonstrate that SWE-Playground trains agents to achieve strong performance across various benchmarks using a significantly smaller dataset, and trajectories across different tasks mutually enhance performance on a single benchmark. Further analysis substantiates the high data efficiency of our approach, with our trajectories containing dense training signal and exhibiting a execution-based softward development paradigm.
 
 <div align="center">
   <img src="./assets/table.png" alt="Pipeline-1" width="100%">

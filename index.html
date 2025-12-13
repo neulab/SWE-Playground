@@ -255,7 +255,7 @@
                     Prior works on training software engineering agents have explored utilizing existing resources such as issues on GitHub repositories to construct software engineering tasks and corresponding test suites. These approaches face key limitations: their reliance on static repositories limits flexibility, and their primary focus on issue resolution restricts the learning of versatile skills required for real-world engineering, such as reproducing issues or building libraries.
                 </p>
                 <p>
-                    To overcome these challenges, we introduce <strong>SWE-Playground</strong>, a novel pipeline for generating environments and trajectories which supports the training of versatile coding agents. Unlike prior efforts, SWE-Playground synthetically generates projects and tasks from scratch with strong language models and agents, eliminating reliance on external data sources. This allows us to tackle a much wider variety of coding tasks. We demonstrate the effectiveness of this approach on three distinct benchmarks, and results indicate that SWE-Playground is highly data efficient, enabling agents to reach comparable performance with significantly fewer trajectories than previous works.
+                    To overcome these challenges, we introduce <strong>SWE-Playground</strong>, a novel pipeline for generating environments and trajectories which supports the training of versatile coding agents. Unlike prior efforts, SWE-Playground synthetically generates projects and tasks from scratch with strong language models and agents, eliminating reliance on external data sources. This allows us to tackle a much wider variety of coding tasks. We demonstrate the effectiveness of this approach on three distinct benchmarks, and results indicate that SWE-Playground produces trajectories with dense training signal, enabling agents to reach comparable performance with significantly fewer trajectories than previous works.
                 </p>
             </div>
         </div>
@@ -270,7 +270,7 @@
         <div class="figure-block">
             <img src="./assets/pipeline-1.png" alt="Pipeline Step 1" class="figure-img">
             <p class="caption">
-                <strong>Figure 2: The Generation Pipeline.</strong> From proposal to validated code. (1) Project Proposal; (2) Task Decomposition; (3) Repository Setup; (4) Unit Test Generation; (5) Implementation and Mutual Verification.
+                <strong>Figure 2: The Main Generation Pipeline.</strong> From proposal to validated code. (1) Project Proposal; (2) Task Decomposition; (3) Repository Setup; (4) Unit Test Generation; (5) Implementation and Mutual Verification.
             </p>
         </div>
 
@@ -283,10 +283,10 @@
             
             <p><strong>4. Unit Test Generation:</strong> An <strong>active agent</strong> (OpenHands) generates strict unit tests based on the checklist. It executes its own tests to verify imports and dependencies, ensuring that tests are functionally valid before implementation begins.</p>
             
-            <p><strong>5. Implementation:</strong> A model implements the functionality using the generated unit tests as a guide. This forms a <strong>mutual verification loop</strong>: an issue in either the test or the implementation leads to failure, adding robustness to the process. To prevent reward hacking, the final verification uses the original, unmodified test suite.</p>
+            <p><strong>5. Functionality Implementation:</strong> A model implements the functionality using the generated unit tests as a guide. This forms a <strong>mutual verification loop</strong>: an issue in either the test or the implementation leads to failure, adding robustness to the process. To prevent reward hacking, the final verification uses the original, unmodified test suite.</p>
         </div>
 
-        <h3 style="text-align: center;">Task Specific Generation</h3>
+        <h3 style="text-align: center;">Capability-Specific Adaption</h3>
         <p style="text-align: center; color: #666; margin-bottom: 2rem;">
             We adapt the pipeline to simulate three distinct coding benchmarks, demonstrating extensibility.
         </p>
@@ -526,21 +526,13 @@
 
         <h3>Investigation into Data Efficiency</h3>
         
-        <div style="display: flex; flex-wrap: wrap; gap: 3rem; align-items: flex-start; margin-top: 2rem;">
-            <div style="flex: 1; min-width: 300px;">
-                 <img src="./assets/scaling.png" alt="Scaling Efficiency" class="figure-img">
-                 <p class="caption">
-                    <strong>Figure 4: Scaling Trends.</strong> Comparison of training time scaling. Our projection suggests SWE-Playground could achieve nearly 45% resolved rate with equivalent data volume to baselines.
-                 </p>
-            </div>
-            <div style="flex: 1; min-width: 300px;">
-                <p style="margin-top: 0;">
-                    Our model demonstrates remarkable data efficiency. <strong>SWE-Play-mix</strong> is only outperformed by R2E-Gym on SWE-bench Verified, despite R2E-Gym using a dataset nearly five times larger.
-                </p>
-                <p>
-                    As shown in Table 3, our trajectories contain <strong>2-3x more tokens and messages</strong> on average. We characterize this as higher <strong>learning density</strong>. The significantly higher proportion of bash execution actions (41.7%) indicates that our agents learn a robust development methodology based on execution and iterative verification, rather than simple code generation.
-                </p>
-            </div>
+        <div style="margin-top: 2rem;">
+            <p>
+                Our results demonstrate remarkable data efficiency. <strong>SWE-Play-mix</strong> is only outperformed by R2E-Gym on SWE-bench Verified, despite R2E-Gym using a dataset nearly five times larger.
+            </p>
+            <p>
+                As shown in Table 3, our trajectories contain <strong>2-3x more tokens and messages</strong> on average. We characterize this as higher <strong>learning density</strong>. The significantly higher proportion of bash execution actions (41.7%) indicates that our agents learn a robust development methodology based on execution and iterative verification, rather than simple code generation.
+            </p>
         </div>
 
         <div class="table-wrapper">
