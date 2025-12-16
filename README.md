@@ -11,7 +11,7 @@
 </p>
 
 <p align="center">
-<a href="">📃 Paper</a>
+<a href="https://arxiv.org/pdf/2512.12216">📃 Paper</a>
 •
 <a href="https://huggingface.co/collections/StephenZhu/swe-playground" >🤗 Data & Models</a>
 •
@@ -157,7 +157,15 @@ For evaluation across various coding benchmarks, please refer to the official im
 ## 📚 Citation
 
 ```bibtex
-
+@misc{zhu2025trainingversatilecodingagents,
+      title={Training Versatile Coding Agents in Synthetic Environments}, 
+      author={Yiqi Zhu and Apurva Gandhi and Graham Neubig},
+      year={2025},
+      eprint={2512.12216},
+      archivePrefix={arXiv},
+      primaryClass={cs.SE},
+      url={https://arxiv.org/abs/2512.12216}, 
+}
 ```
 
 ## 📄 License
